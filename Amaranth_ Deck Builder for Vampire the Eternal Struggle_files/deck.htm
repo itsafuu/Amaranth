@@ -798,158 +798,120 @@
 			this.exportdeck('lackey')
 		}
 
-		export_jol(e) {
-			e.preventUpdate = true
-			this.exportdeck('jol')
+
+	export_jol(e) {
+		e.preventUpdate = true
+		this.exportdeck('jol')
+	}
+
+	exportdeck(format) {
+		// Client-side export - no login required
+		var exportText = this.generateExportText(format);
+		
+		if (exportText) {
+			swal({type:'success', text: 'Downloading File.', showConfirmButton: false, allowOutsideClick: true, timer: 2 * 1000}).done()
+			
+			// Create download
+			var blob = new Blob([exportText], {type: 'text/plain'});
+			var url = window.URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.href = url;
+			var extension = format === 'text' ? 'txt' : format;
+			var filename = (this.deck.title || 'deck').split(' ').join('_').replace(/[^\w]/g, '') + '.' + extension;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);
+		} else {
+			swal({type:'error', text: 'Export format not supported yet.', showConfirmButton: false, allowOutsideClick: true, timer: 3 * 1000}).done()
+		}
+	}
+
+	generateExportText(format) {
+		var text = '';
+		var deck = this.deck;
+		
+		// Parse the deck to populate crypt and library arrays
+		this.deck_parser(deck.cards);
+		var crypt = this.crypt || [];
+		var library = this.librarycards || [];
+		
+		if (format === 'text') {
+			// Plain text format
+			text = deck.title + '\n';
+			if (deck.author) text += 'Author: ' + deck.author + '\n';
+			if (deck.description) text += '\n' + deck.description + '\n';
+			
+			text += '\n-- Crypt (' + crypt.length + ') --\n';
+			crypt.forEach(function(card) {
+				text += (card.qty || 1) + 'x ' + card.name + '\n';
+			});
+			
+			text += '\n-- Library (' + library.length + ') --\n';
+			library.forEach(function(card) {
+				text += (card.qty || 1) + 'x ' + card.name + '\n';
+			});
+			
+		} else if (format === 'lackey') {
+			// Lackey format
+			crypt.forEach(function(card) {
+				for (var i = 0; i < (card.qty || 1); i++) {
+					text += card.name + '\n';
+				}
+			});
+			library.forEach(function(card) {
+				for (var i = 0; i < (card.qty || 1); i++) {
+					text += card.name + '\n';
+				}
+			});
+			
+		} else if (format === 'jol') {
+			// JOL format (similar to text but different formatting)
+			crypt.forEach(function(card) {
+				text += (card.qty || 1) + ' ' + card.name + '\n';
+			});
+			library.forEach(function(card) {
+				text += (card.qty || 1) + ' ' + card.name + '\n';
+			});
+		}
+		
+		return text;
+	}
+
+	duplicate(e) {
+		e.preventUpdate = true
+		var deck = app.copydeck(this.deck)
+		riot.route('/deck/' + deck.uuid)
+	}
+	save(e){
+		e.preventUpdate = true
+
+		if(!this.deck.title) {
+			swal({
+				type:'warning', text: 'Please enter a title.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000
+			}).done()	
+
+			this.title.focus()
+
+			return false 
 		}
 
-		exportdeck(format) {
-
-			var ifloggedin
-
-			ifloggedin = function(){
-				app.callapi('/api/deck/exportas', {
-					format: format,
-					deck: JSON.stringify(this.deck)
-				}, function(response){
-					if(response.success) {
-						swal({type:'success', text: 'Downloading File.', showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
-						var download =  response.result 
-						app.downloadtxt(download, this.deck.title)
-					}
-					else {
-						var error = 'There\'s been an error — please try again.'
-
-						if(response.error && response.error.code == -1) {
-							var error = response.error.message
-						}
-						swal({type:'error', text: error, showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
-					}
-
-				}.bind(this))
-			}.bind(this)
-
-			if(app.user.id) {
-				ifloggedin()
-			} 
-
-			else {
-				app.login(ifloggedin)
-			}
-		}
-
-		duplicate(e) {
-			e.preventUpdate = true
-			var deck = app.copydeck(this.deck)
-			riot.route('/deck/' + deck.uuid)
-		}
-
-		save(e){
-			e.preventUpdate = true
-
-			if(!this.deck.title) {
-				swal({
-					type:'warning', text: 'Please enter a title.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000
-				}).done()	
-
-				this.title.focus()
-
-				return false 
-			}
-
-			app.save()
-
-			var ifloggedin = function(){
-
-				swal({type:'', title: '', text: 'Saving deck to cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
-
-				app.callapi('/api/deck/save', {
-					deck: JSON.stringify(this.deck)
-				}, function(response){
-
-					// Set id + uuids 
-					if(response.success) {
-
-						this.deck.dirty = 0
-
-
-						if(!this.deck.notowner) {
-
-							// Get ids from server
-							this.deck.id = response.result.id 
-							this.deck.uuid = response.result.uuid 
-
-							// Server may create a new deck depending on security
-							var existing 
-
-							// Check for deck
-							app.decks.forEach(function(deck){
-								if(deck.uuid == this.deck.uuid) {
-									existing = deck 
-								}
-							}.bind(this))
-
-							// If new add it
-							if(!existing) {
-								app.decks.push(this.deck)
-							}
-
-							// Set the new modified date 
-							this.deck.modified = response.offset
-
-							// Save the new offset
-							store.set('offset', response.offset)
-
-							// Store the data
-							app.save()
-
-							app.trigger('decks')	
-
-							swal({type:'success', text: 'Deck saved to cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
-
-							riot.route('/decks')
-
-						}
-
-						else {
-							swal({type:'success', text: 'Shared deck saved to cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
-						}
-
-
-					}
-
-					// Report error
-					else {
-
-						var error = response.error.message
-							
-						if(error == 'Access not permitted') {
-							app.login(ifloggedin)
-						}
-
-						else {
-							swal({type:'error', text: 'There was an error saving the deck to the cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
-						}
-
-
-					}
-
-
-				}.bind(this))			
-			}.bind(this)
-
-
-			if(app.user.id) {
-				ifloggedin()
-			} 
-
-			else {
-				app.login(ifloggedin)
-			}
-
-
-		}
-
+		// Save to localStorage
+		app.save()
+		
+		// Mark as saved
+		this.deck.dirty = 0
+		
+		// Show confirmation
+		swal({
+			type:'success', 
+			text: 'Deck saved.', 
+			showConfirmButton: false, 
+			allowOutsideClick: true, 
+			timer: 1000
+		}).done()
+	}
 	
 		printdeck(e) {
 			e.preventUpdate = true	

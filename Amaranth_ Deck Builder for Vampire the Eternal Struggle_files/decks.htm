@@ -10,17 +10,14 @@
 						
 			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--3-col-phone">
 
-				<label class="card-filter-settings mdl-button mdl-js-button mdl-button--icon" id="importbtn">
-					<i class="material-icons"  tabindex="2">&#xE2C6;</i>
-				</label>
+		<label class="card-filter-settings mdl-button mdl-js-button mdl-button--icon" id="importbtn">
+			<i class="material-icons"  tabindex="2">&#xE2C6;</i>
+		</label>
 
-	
-				<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="importbtn">
-					<li class="mdl-menu__item" onclick={ import_secret }>SecretLibrary</li>
-					<li class="mdl-menu__item" onclick={ import_jol }>JOL</li>
-				</ul>
-
-				<label class="mdl-button  mdl-button--icon mdl-js-button" style="float:right; margin-top:5px;" id="sortdecks_btn">
+		<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="importbtn">
+			<li class="mdl-menu__item" onclick={ import_file }>Upload File</li>
+		</ul>
+		<input type="file" id="deck-file-input" accept=".txt,.jol,.lackey" style="display:none" onchange={ handle_file_upload } />				<label class="mdl-button  mdl-button--icon mdl-js-button" style="float:right; margin-top:5px;" id="sortdecks_btn">
 					<i class="material-icons">&#xE8d5;</i>
 				</label>
 
@@ -355,6 +352,106 @@
 	this.on('unmount', function(){
 		app.off('decks', this.update)
 	})
+
+	import_file(e) {
+		e.preventUpdate = true;
+		document.getElementById('deck-file-input').click();
+	}
+
+	handle_file_upload(e) {
+		e.preventUpdate = true;
+		var file = e.target.files[0];
+		if (!file) return;
+
+		var reader = new FileReader();
+		reader.onload = function(event) {
+			var content = event.target.result;
+			var cards = this.parse_deck_file(content);
+			
+			if (cards && Object.keys(cards).length > 0) {
+				var deck = app.newdeck();
+				deck.title = file.name.replace(/\.(txt|jol|lackey)$/i, '') || 'Imported Deck';
+				deck.cards = cards;
+				
+				app.save();
+				riot.route('/deck/' + deck.uuid);
+				
+				swal({
+					type: 'success',
+					text: 'Deck imported successfully!',
+					timer: 2000,
+					showConfirmButton: false
+				}).done();
+			} else {
+				swal({
+					type: 'error',
+					text: 'Could not parse deck file. Make sure it\'s in JOL, Lackey, or Text format.',
+					timer: 3000,
+					showConfirmButton: false
+				}).done();
+			}
+			
+			// Reset file input
+			e.target.value = '';
+		}.bind(this);
+		
+		reader.readAsText(file);
+	}
+
+	parse_deck_file(content) {
+		var cards = {};
+		var lines = content.split(/\r?\n/);
+		
+		for (var i = 0; i < lines.length; i++) {
+			var line = lines[i].trim();
+			if (!line || line.startsWith('--') || line.startsWith('#')) continue;
+			
+			// Try to parse different formats:
+			// JOL format: "2 Card Name"
+			// Text format: "2x Card Name"
+			// Lackey format: "Card Name" (one per line)
+			
+			var qty = 1;
+			var cardName = line;
+			
+			// Match "2x Card Name" or "2 Card Name"
+			var match = line.match(/^(\d+)\s*x?\s+(.+)$/i);
+			if (match) {
+				qty = parseInt(match[1]);
+				cardName = match[2].trim();
+			}
+			
+			// Find card in database by name
+			var card = this.find_card_by_name(cardName);
+			if (card) {
+				cards[card.id] = (cards[card.id] || 0) + qty;
+			}
+		}
+		
+		return cards;
+	}
+
+	find_card_by_name(name) {
+		if (!window.cards) return null;
+		
+		name = name.trim().toLowerCase();
+		
+		// Try exact match first
+		for (var i = 0; i < window.cards.length; i++) {
+			if (window.cards[i].name.toLowerCase() === name) {
+				return window.cards[i];
+			}
+		}
+		
+		// Try partial match
+		for (var i = 0; i < window.cards.length; i++) {
+			if (window.cards[i].name.toLowerCase().indexOf(name) !== -1) {
+				return window.cards[i];
+			}
+		}
+		
+		return null;
+	}
 
 	</script>
 
