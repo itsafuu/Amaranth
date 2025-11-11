@@ -1,0 +1,361 @@
+<decks>
+
+
+	<div class="card-header mdl-color--blue-grey-100">
+		<div class="mdl-grid mdl-grid--no-spacing">
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--1-col-phone">
+				<h5><span class="notsm">Your </span>Decks <i class="material-icons" tabindex="3" style="margin: -10px 0 -6px -5px;opacity: 0.5;vertical-align: middle" onclick={ refresh } >refresh</i><small if={ cards.length } style="position:absolute;"> { decks.length }</small></h5>
+
+			</div>
+						
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--3-col-phone">
+
+				<label class="card-filter-settings mdl-button mdl-js-button mdl-button--icon" id="importbtn">
+					<i class="material-icons"  tabindex="2">&#xE2C6;</i>
+				</label>
+
+	
+				<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="importbtn">
+					<li class="mdl-menu__item" onclick={ import_secret }>SecretLibrary</li>
+					<li class="mdl-menu__item" onclick={ import_jol }>JOL</li>
+				</ul>
+
+				<label class="mdl-button  mdl-button--icon mdl-js-button" style="float:right; margin-top:5px;" id="sortdecks_btn">
+					<i class="material-icons">&#xE8d5;</i>
+				</label>
+
+				<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="sortdecks_btn">
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="name">Name</li>
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="newest">Newest</li>
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="modified">Modified</li>
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="oldest">Oldest</li>
+				</ul>
+
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable { q ? 'is-dirty' : '' }">
+					<i class="material-icons clear_filter_button" tabindex="2" onclick={ clear } if={ q }>cancel</i>
+
+					<label name="searchglass" class="mdl-button mdl-js-button mdl-button--icon" for="searchdecks">
+						<i class="material-icons">&#xE8B6;</i>
+					</label>
+					<div class="mdl-textfield__expandable-holder">
+						<label class="mdl-textfield__label" for="searchlib">Search...</label>
+						<input class="mdl-textfield__input" type="text" onkeyup={ search } value="" tabindex="1" id="searchdecks">
+					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+
+
+
+	<div class="mdl-grid mdl-grid--no-spacing" if={ 0 }>
+		<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+			<h2 class="mdl-card__title-text">
+				<span class="notsm">Your </span>Decks<small style="position:absolute;" class="notsm">{ decks.length }</small>
+			</h2>
+		</div>
+	
+		<div class="mdl-cell mdl-cell--6-col mdl-cell--2-col-tablet mdl-cell--2-col-phone ">
+
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable decks__searchbox">
+				<label class="mdl-button mdl-js-button mdl-button--icon  mdl-color-text--primary" for="searchdecks">
+					<i class="material-icons">&#xE8B6;</i>
+				</label>
+				<div class="mdl-textfield__expandable-holder { q ? 'is-dirty' : '' }">
+					<input class="mdl-textfield__input" type="text" onkeyup={ search } value={ q } id="searchdecks2" tabindex="1">
+					<label class="mdl-textfield__label" for="searchdecks2">Search...</label>
+				</div>
+			</div>				
+
+			<label class="mdl-button mdl-button--icon mdl-js-button mdl-color-text--primary" style="float: right;margin-top: 14px;margin-right: 46px" id="sortdecks_btn">
+				<i class="material-icons">&#xE8d5;</i>
+			</label>
+
+			<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="sortdecks_btn">
+				<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="name">Name</li>
+				<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="newest">Newest</li>
+				<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="oldest">Oldest</li>
+			</ul>
+
+			<label class="mdl-button mdl-button--icon mdl-js-button mdl-color-text--primary" style="float: right;margin-top: 14px;margin-right: 6px" id="importbtn">
+				<i class="material-icons">&#xE2C6;</i>
+			</label>
+
+			<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="importbtn">
+				<li class="mdl-menu__item" onclick={ import_secret }>SecretLibrary</li>
+			</ul>
+
+		</div>
+
+	</div>
+
+	<div class="card-content">
+		<div class="mdl-list mdl-color--white mdl-shadow--2dp ">
+			<div class="mdl-list__item"	each={ decks } no-reorder="true" onclick={ editdeck }>
+				<span class="mdl-list__item-primary-content">
+					<span>{ title }</span>
+				</span>
+			
+				<span class="mdl-list__item-secondary-content"><span>{ category }</span></span>				
+
+
+				<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ addcard }>
+					<i class="material-icons">&#xE315;</i>
+				</button>
+
+			</div>
+		</div>
+	</div>
+
+	<button class="decks-new-button mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick={ newdeck }>
+		<i class="material-icons">&#xE145;</i>
+	</button>	
+
+	<script>
+	// Grab all library cards
+	this.q         = ''
+	this.decks     = app.decks 
+	this.deckorder = app.deckorder || app.default_deckorder
+
+	newdeck(e){
+		e.preventUpdate = true
+		var deck = app.newdeck()
+		riot.route('/deck/' + deck.uuid)
+	} 
+
+	editdeck(e){
+		e.preventUpdate = true
+		riot.route('/deck/' + e.item.uuid)
+	} 
+
+	sortdecksby(e){
+		e.preventDefault()
+		var order = $(e.target).data('sort')
+		this.deckorder = order
+		app.deckorder = order 
+
+		console.log('sortdecksby', order)
+
+	}
+
+	clear(e){
+		//e.preventUpdate = true 
+		this.q = ''
+		this.filter()
+		store.set('deck.search', this.q)
+	}
+
+	search(e){
+		e.preventUpdate = true 
+		this.q = e.target.value.trim() 
+
+		this.filter()
+		store.set('deck.search', this.q)
+	}
+
+	refresh(e) {		
+		swal({type:'', title: '', text: 'Syncing decks from cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
+		app.syncdecks(true)
+	}
+
+
+	filter(){
+		var q     = (this.q || '').toLowerCase()
+		var words = q.match(/(\w+)/gi)
+		var cards = []
+
+		clearInterval(this.filterInt)
+		this.filterInt = setTimeout(function(){ 
+
+			if(words) {
+
+				app.librarycards(function(card){ 
+					
+					var keywords = (card.name + ' ' + (card.clan || '') + ' ' + (card.disc || '') + ' ' + (card.keywords || '') + ' ' + card.type).toLowerCase()
+
+					if(
+						~keywords.indexOf(words[0] || '') && 
+						~keywords.indexOf(words[1] || '') && 
+						~keywords.indexOf(words[2] || '') && 
+						~keywords.indexOf(words[3] || '')
+					) {
+						cards.push(card.id)
+					}
+				})
+
+				app.cryptcards(function(card){ 
+
+					var keywords = (card.name + ' ' + (card.clan || '') + ' ' + (card.disc || '') + ' ' + (card.keywords || '') + ' ' + card.type).toLowerCase()
+
+					if(
+						~keywords.indexOf(words[0] || '') && 
+						~keywords.indexOf(words[1] || '') && 
+						~keywords.indexOf(words[2] || '') && 
+						~keywords.indexOf(words[3] || '')
+					) {
+						cards.push(card.id)
+					}
+				})
+
+				this.decks = app.decks.filter(function(deck){
+					var keywords = (deck.title + ' ' + (deck.category || '') + ' ' + deck.description).toLowerCase()
+
+					// Match on name / description
+					if(
+					   ~keywords.indexOf(words[0] || '') &&
+					   ~keywords.indexOf(words[1] || '') &&
+					   ~keywords.indexOf(words[2] || '') &&
+					   ~keywords.indexOf(words[3] || '') &&
+					   ~keywords.indexOf(words[4] || '') 
+				 	) {
+						return true
+					}
+
+					// Match on cards
+					if(cards.length) {
+
+						for(var i = 0; i < cards.length; i++){
+							var id = cards[i]
+							if(deck.cards[id]) {
+								return true
+							}							
+						}
+					}
+								
+				})
+
+			}
+
+			else {
+				this.decks = app.decks
+			}
+
+			this.update()
+		}.bind(this), 100)
+
+	}
+
+	import_deck(type, url){
+		swal({
+				title: 'Import',
+				text: 'Please enter the ' + type + ' deck number / URL',
+				input: 'text',
+				showCancelButton: true,
+				confirmButtonText: 'Import',
+				showLoaderOnConfirm: true,
+				reverseButtons: true,
+				preConfirm: function(deck) {
+					return new Promise(function(resolve, reject) {
+						if (deck === '') {
+							reject('Please enter the number / URL');
+						} else {
+							resolve();
+						}
+					});
+				},
+				allowOutsideClick: false
+			}).then(function(deck) {
+				app.callapi('/api/import/secretlibrary', {deck: deck}, function(response){
+					if(response.success) {
+
+						var deck = app.newdeck()
+
+						deck.title = 'Imported Deck'
+						deck.cards = response.result 
+
+
+						app.save()
+						riot.route('/deck/' + deck.uuid)
+							
+						swal({
+							type: 'success',
+							text: 'Deck imported',
+							timer: 2 * 1000,
+							showConfirmButton: false
+						}).done();
+
+						setTimeout(function(){swal.close()}, 3001)
+
+						///this.update()					
+					}
+
+					else {
+						var error = 'There\'s been an error — please try again.'
+
+						if(response.error && response.error.code == -1) {
+							error = response.error.message
+						}
+
+						swal({type:'error', text: error, showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()						
+					}
+				}.bind(this))
+				
+
+			}).done()	
+	}
+
+	import_secret(e){
+
+		e.preventUpdate = true 
+
+		var ifloggedin = function(){
+			this.import_deck('SecretLibrary', '/api/import/secretlibrary')
+		}.bind(this)
+
+		if(app.user.id) {
+			ifloggedin()
+		} 
+
+		else {
+			app.login(ifloggedin)
+		}		
+	}
+
+	import_jol(e){
+
+		e.preventUpdate = true 
+
+		var ifloggedin = function(){
+			this.import_deck('JOL', '/api/import/jol')
+		}.bind(this)
+
+		if(app.user.id) {
+			ifloggedin()
+		} 
+
+		else {
+			app.login(ifloggedin)
+		}		
+	}
+
+	this.on('update', function(){
+		if(this.deckorder) app.sortdecks(this.decks, this.deckorder)
+	})
+
+	this.on('mount', function(){
+		this.q = store.get('deck.search') || ''
+		this.searchdecks.value = this.q
+
+		componentHandler.upgradeDom();
+		app.on('decks', this.update)
+
+	//	app.syncdecks()
+
+		if(this.q) {
+			this.filter()
+			this.update()
+		}
+
+	//	this.librarycards = window.cards.filter(function(card){ return card.type != 'Vampire' && card.type != 'Imbued' })
+	})
+
+	this.on('unmount', function(){
+		app.off('decks', this.update)
+	})
+
+	</script>
+
+</decks>

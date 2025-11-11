@@ -1,0 +1,243 @@
+<print class="mdl-grid">
+
+	<div class="mdl-cell mdl-cell--12-col" style="min-height:0;">
+		<h2 class="mdl-card__title-text" onkeyup={ changetitle }>{ deck.title } </h2>
+	</div>
+
+
+	<div class="print-cards mdl-cell mdl-cell--10-col  mdl-cell--7-col-tablet mdl-cell--4-col-phone" style="padding: 0;">
+
+		<div class="mdl-grid " style="padding:0;margin: -8px;">
+	
+
+			<div class="mdl-cell mdl-cell--3-col  mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp" style="padding: 8px;" each={ crypt } data-id="{ id }" if={ qty > 0 }>		
+			<label class="mdl-checkbox mdl-js-checkbox"  for="card{ id }"  style="height:auto;">
+			  <input type="checkbox" id="card{ id }" class="mdl-checkbox__input" checked onchange={ togglecard }>
+			  <span class="mdl-checkbox__label">{ parent.deck.cards[ id ] || 0 } x { name }</span>
+			</label>
+			</div>
+
+			<virtual each={ type in cardtypes }>
+				<div class="mdl-cell mdl-cell--3-col  mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp" style="padding: 8px;"  each={ library[type] } data-id="{ id }" if={ qty > 0 }>		
+				<label class="mdl-checkbox mdl-js-checkbox"  for="card{ id }" style="height:auto;">
+				  <input type="checkbox" id="card{ id }" class="mdl-checkbox__input" checked onchange={ togglecard }>
+				  <span class="mdl-checkbox__label">{ parent.deck.cards[ id ] || 0 } x { name }</span>
+				</label>
+				</div>
+			<virtual>
+
+		</div>
+	</div>
+
+
+	<div class="deck-buttons mdl-cell mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--4-col-phone">
+
+		<button class="mdl-button mdl-js-button mdl-button--raised  mdl-button--accent"  onclick={ printsome }>
+			Print
+		</button>
+		
+		<button class="mdl-button mdl-js-button mdl-button--raised "  onclick={ toggleall }>
+			Toggle All
+		</button>
+
+		<button class="mdl-button mdl-js-button mdl-button--raised" onclick={ cancel } >
+			Cancel
+		</button>
+
+		<br/>
+		<br/>
+
+			<label class="mdl-checkbox mdl-js-checkbox"  for="oldcardsLabel" style="display:none;">
+			  <input type="checkbox" id="oldcardsLabel" class="mdl-checkbox__input" onchange={ setoldcards } checked={ useoldcards }>
+			  <span class="mdl-checkbox__label">Use old cards</span>
+			</label>
+
+	</div>
+
+
+	<script>
+
+		this.deck        = opts.deck 
+		this.printcards  = {}
+		this.useoldcards = parseInt(app.get_user_setting('use_old_cards')) || 0 
+		this.backup      = JSON.parse(JSON.stringify(this.deck))
+		this.cardorder   = app.cardorder 
+
+		for(key in this.deck.cards) {
+			if(this.deck.cards[key] > 0) this.printcards[key] = this.deck.cards[key]
+		}
+
+		setoldcards(e) {
+			e.preventUpdate = true
+			this.useoldcards = e.target.checked
+		}
+
+		toggleall(e) {
+			e.preventUpdate = true
+			$(this.root).find('.print-cards').find('input').trigger('click')
+		}
+
+		togglecard(e) {
+			e.preventUpdate = true
+			var card = e.item 
+
+			if(this.printcards[card.id]) {
+				delete this.printcards[card.id]
+			}
+			else {
+				this.printcards[card.id] = 	this.deck.cards[card.id]
+			}
+		}
+	
+		printsome(e) {
+			e.preventUpdate = true	
+
+
+			var ifloggedin = function(){
+				// Show please wait dialogue
+				swal({type:'info', text: 'Generating PDF...', showConfirmButton: false, allowOutsideClick: false, timer: 25 * 1000 }).done()	
+
+				app.callapi('/api/print', {
+					deck: JSON.stringify(this.deck), 
+					cards: JSON.stringify(this.printcards),
+					format: (this.useoldcards ? 'old' : 'new') 
+				}, function(response){
+
+					if(response.success) {
+						swal({type:'success', text: 'Downloading PDF.', showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
+						var download =  response.result 
+						app.downloadpdf(download, this.deck.title)
+						this.cancel(e)
+					}
+
+					else {
+						var error = 'There\'s been an error — please try again.'
+
+						if(response.error && response.error.code == -1) {
+							var error = response.error.message
+						}
+
+						swal({type:'error', text: error, showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
+					}
+				}.bind(this))
+			}.bind(this)
+
+
+			if(app.user.id) {
+				ifloggedin()
+			} 
+
+			else {
+				app.login(ifloggedin)
+			}
+		}
+
+		cancel(e){
+			e.preventUpdate = true	
+
+			if($(this.root).parents('.modal').length) {
+				app.hidemodal()
+				setTimeout(function(){
+					this.unmount() 
+				}.bind(this), 500)
+			}
+
+			else {
+				riot.route('/decks')
+			}
+
+		}
+
+		var onedit = function(){
+			this.update()			
+		}.bind(this)
+
+		this.on('mount', function(){
+			app.on('deckchange', onedit)
+		})
+
+		this.on('unmount', function(){
+			app.off('deckchange', onedit)
+		})
+
+		this.on('update', function(){
+			var crypt = []
+			var library = {}
+			var librarytype 
+			var lastlib
+			var lastcrypt
+
+			var cards = this.deck.cards
+			crypt.total = 0
+			library.total = 0
+
+			for(id in cards) {
+				var qty = parseInt(cards[id])
+				var card = cardindex[id]
+				card.qty = qty
+
+				if(card.type != 'Vampire' && card.type != 'Imbued') {
+					librarytype = library[card.type]
+
+					if(!librarytype){
+						library[card.type] = []
+						librarytype = library[card.type]
+						librarytype.total = 0
+					}
+
+					librarytype.push(card)
+					library.total += qty
+					librarytype.total += qty
+					if(lastlib){
+						lastlib.next_id = card.id 
+						card.prev_id = lastlib.id
+						card.next_id = null
+					} 
+					else {
+						card.prev_id = null
+						card.next_id = null
+
+					}
+					lastlib = card 
+				}
+
+				else {
+					crypt.push(card)
+					crypt.total+= qty
+					if(lastcrypt){
+						lastcrypt.next_id = card.id 
+						card.prev_id = lastcrypt.id
+						card.next_id = null
+					}
+					else {
+						card.prev_id = null
+						card.next_id = null
+
+					}
+					lastcrypt = card
+				}
+
+				last = card 
+			}
+
+			var cardtypes = []
+
+			for(type in library) {
+				if(type != 'total') cardtypes.push(type)
+			}
+			var cardorder = this.cardorder
+			cardtypes.sort(function(a, b){
+				return cardorder[a] > cardorder[b] ? 1 : -1
+			})
+
+			this.cardtypes = cardtypes 
+
+
+
+
+			this.crypt = crypt
+			this.library = library
+		})
+	</script>
+
+</print>

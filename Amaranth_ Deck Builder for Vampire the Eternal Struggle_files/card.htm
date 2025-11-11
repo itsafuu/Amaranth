@@ -1,0 +1,504 @@
+
+
+<card class="mdl-grid  mdl-grid--no-spacing mdl-shadow--2dp mdl-color--white">
+
+	<div class="card-image mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet" show={ show_card_images }>
+		<span class="image-holder"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></span>
+	</div>
+
+	<div class="card-detail mdl-cell mdl-cell--{ show_card_images ? '6' : '12' }-col mdl-cell--{ show_card_images ? '4' : '8' }-col-tablet">
+
+		<div class="card-buttons" if={ cards.length > 1 || (deck && !deck.readonly) }>
+
+			<div class="card-qty">
+
+				<button if={ deck && !deck.readonly } class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ removecard }>
+					<i class="material-icons">&#xE15C;</i>
+				</button>
+
+				<span if={ deck } class="picker-total total_in_deck mdl-list__item-secondary-action">{ deck.cards[ card.id ] || 0 }</span>
+
+				<button if={ deck && !deck.readonly } class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ addcard }>
+					<i class="material-icons">&#xE147;</i>
+				</button> 
+
+			</div>
+
+			<button class="card-prev mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onclick={ prev } if={ prevcard }>
+			  <i class="material-icons">&#xE314;</i>
+			</button>
+			<button class="card-next mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onclick={ next } if={ nextcard }>
+			  <i class="material-icons">&#xE315;</i>
+			</button>
+		</div>
+		
+
+
+		<div class="mdl-color--primary mdl-color-text--white">
+
+			<h5 class="card-title" style="background: { header_colour( card.type ) }">
+
+				<small class="card_score" if={ card.rating && app.twda } title="Card rating">{ card.rating } / 100</small> 
+				<small class="card_score" if={ !card.rating && app.twda }>n/a</small> 
+				<small class="card_score" if={ card_category(card) }>{ card_category(card) }</small>
+
+				{ card.name }
+			
+			</h5>
+
+		</div>
+
+
+
+
+		<div class="card-text">
+
+			<div class="card-text-fill">
+
+	  			<div class="mdl-tabs mdl-js-tabs" >
+	          	   <div class="mdl-tabs__tab-bar" style="margin:0 -14px 10px -14px;">
+	                  <a href="#tab1-panel" class="mdl-tabs__tab { !text_active || text_active == 'Official' ? 'is-active' : ''}">Official</a>
+	                  <a href="#tab2-panel" class="mdl-tabs__tab { text_active == 'Revised' ? 'is-active' : ''}" show={ has_alt }>Revised</a>
+	                  <a href="#tab3-panel" class="mdl-tabs__tab { text_active == 'Changes' ? 'is-active' : ''}" show={ has_history }>Changes</a>
+	                  <a href="#tab4-panel" class="mdl-tabs__tab { text_active == 'Rulings' ? 'is-active' : ''}" show={ has_ruling }>Rulings</a>
+	               </div>
+
+	            
+	               <div class="mdl-tabs__panel { !text_active || text_active == 'Official' ? 'is-active' : ''}" id="tab1-panel" if={ cardinfo }>
+	   					
+	   					<div if={ card.type && card.islibrary } style="margin-bottom: 6px;"><strong><rawupdate html={ iconify_type(card.type) }/></strong><hr/></div>
+							
+						<div if={ card.iscrypt}>
+							<strong><rawupdate html={ iconify_clan(cardinfo.clan) } class="clan" /></strong><br/>
+							
+							<span if={ card.disc }><rawupdate html={ iconify_disc(card.disc) }/> 
+								<icon class={ card.path && card.path.split(' ').join('_') } if={ card.path } title={ card.path } style="font-size: 30px;margin-bottom: -8px;margin-top: -3px;margin-left: -4px;"></icon>
+								<br/></span>
+							<hr/>
+						</div>
+
+						<div if={ !card.iscrypt}>
+							<icon class={ card.path && card.path.split(' ').join('_') } if={ card.path } title={ card.path } style="font-size: 30px;margin-bottom: -8px;margin-top: -3px;"></icon>
+							{  card.path  }
+							<hr/>
+						</div>
+
+
+						<p style="white-space: pre-wrap;"><rawupdate html={ iconify(cardinfo.text || '') } /></p>
+
+						<span class="banned" if={ card.banned }>Banned</span></span>
+ 						
+ 						<hr if={ card.path && card.path != '' } />
+						 <span class="banned" if={ card.path && card.path != '' }>Not Legal</span> 
+
+					</div>
+	            
+					<div class = "mdl-tabs__panel { text_active == 'Official' ? 'is-active' : ''}" id="tab2-panel">
+						<p style="white-space: pre-wrap;"><rawupdate html={ iconify(cardinfo.text_alt || cardinfo.text || '') }/></p>
+	            	</div>
+	            
+	            	<div class="mdl-tabs__panel{ text_active == 'Official' ? 'is-active' : ''} " id="tab3-panel">
+						<p id="alt_diff">{ cardinfo.text }</p>
+					</div>
+	      
+	      
+					<div class="mdl-tabs__panel{ text_active == 'Rulings' ? 'is-active' : ''} " id="tab4-panel">
+						<p style="margin-bottom:14px;" each={ card.rulings }><label class="history_label">{ who || 'n/a' }</label><br/><rawupdate html={ iconify(text) } /></p>
+					</div>
+	      
+	            </div>			
+
+	            <hr/>
+
+				<div if={ card.islibrary }>
+					<span if={ card.clan }><strong class="card-label">Requires: </strong><rawupdate html={ iconify_clan(cardinfo.clan) } /><br/></span>
+					<span if={ card.disc }><strong class="card-label">Requires: </strong>{ card.disc } <br/></span>
+				</div>
+			
+				<span if={ cardinfo.bcost    }><strong class="card-label">Costs: </strong>{ cardinfo.bcost } blood<br/></span>
+				<span if={ cardinfo.pcost    }><strong class="card-label">Costs: </strong>{ cardinfo.pcost } pool <br/></span>
+				<span if={card.sets.length > 1 && !show_set_info } onclick={ show_sets }><strong class="card-label">Sets: </strong>{ card.sets.length } (show)</span>
+						
+				<div class="mdl-grid  mdl-grid--no-spacing" if={ show_set_info && card.sets.length > 1 }>
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone"  style="text-overflow: ellipsis;overflow: hidden;">
+						<span><strong class="card-label">Sets: </strong><span each={ set in card.sets }><br/>{ app.sets_index[set] }</span></span>
+					</div>
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" style="text-overflow: ellipsis;overflow: hidden;">
+						<span if={rarity && rarity.length > 1}><strong class="card-label">Rarity: </strong><span each={ r in rarity }><br/>{ r }</span></span>
+					</div>
+				</div>
+
+				<span if={card.sets.length == 1}><strong class="card-label">Set: </strong><span each={ set in card.sets }>{ app.sets_index[set] }</span><br/></span>
+				<span if={rarity && rarity.length == 1}><strong class="card-label">Rarity: </strong><span each={ r in rarity }>{ r }</span></span>
+			
+			</div>
+
+			<div class="deck-buttons" style="margin-top: 14px;">
+
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick={ view_insights } if={ false } >
+					<i class="material-icons">remove_red_eye</i> View Insights
+				</button>		
+				
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-cell--hide-desktop" onclick={ reportissue }>
+					<i class="material-icons">report_problem</i> Report Issue
+				</button>
+
+				<button class="mdl-button mdl-js-button mdl-button--raised card__done-button" onclick={ done }>
+					Done
+				</button>
+
+			</div>
+
+
+		</div>
+
+
+	</div>
+
+
+	<style type="text/css">
+		
+		strong.card-label{
+		    min-width: 80px;
+		    display: inline-block;
+		    font-weight: 200;
+		    margin-bottom: 6px;
+		}
+	</style>
+
+
+	<script>
+
+		this.mixin(amaranth_util.prototype)	
+
+		this.card     = opts.card
+		this.cards    = opts.cards
+		this.deck     = opts.deck
+		this.mnt      = opts.mnt
+		this.el       = opts.el 
+		this.cardinfo = {} 
+		this.rarity = []
+
+		this.show_card_images = app.get_user_setting('show_card_images')		
+
+		if(this.show_card_images === undefined) {
+			this.show_card_images = 1
+		}
+
+		var setNextPrev = function(){
+			var cards = this.cards 
+			var card = this.card 
+			var count = cards.length
+
+			for(var i = 0; i < count; i++) {
+				if(cards[i] == card){
+					this.prevcard = cards[i-1]
+					this.nextcard = cards[i+1]
+					return 
+				}
+			}
+		}.bind(this)
+
+		setNextPrev()
+
+		view_insights(e){
+			var dom = document.createElement('view-insights')
+			app.setmodal(dom)
+			riot.mount(dom, 'view-insights', {card: this.card })		
+
+			riot.route('/view-card-insights')
+		}
+
+		publish(e) {
+			e.preventUpdate = true
+
+		app.callapi('/api/card/' + this.card.id + '/publish', function(response){
+			var src =  'cardimages/' + this.cardinfo.imagefile + '.jpg?' + Math.random()
+
+			console.log('img', $(this.root).find('.card-image').find('img'))
+			$(this.root).find('.card-image').find('img').attr('src', src)
+		}.bind(this))
+		}
+
+		next(e) {
+			e.preventUpdate = true
+			var card = this.nextcard
+
+			if(!card) return
+			var dom = document.createElement('card')
+			app.replacemodal(dom)
+			this.unmount()
+			riot.mount(dom, 'card', {card: card, cards: this.cards, deck: this.deck, mnt: this.mnt })		
+		}
+
+		prev(e) {
+			e.preventUpdate = true
+			var card = this.prevcard
+			if(!card) return
+			var dom = document.createElement('card')
+			app.replacemodal(dom)
+			this.unmount()
+			riot.mount(dom, 'card', {card: card, cards: this.cards, deck: this.deck, mnt: this.mnt })		
+		}
+
+		done(e) {
+			e.preventUpdate = true
+			app.hidemodal()
+		}
+
+		show_sets(e){
+			this.show_set_info = 1
+		}
+		addcomment(e) {
+
+			e.preventUpdate = true
+			var dom = document.createElement('addcomment')
+			setTimeout(function(){
+				app.setmodal(dom, function(modal){
+					modal.css('overflow-y', 'auto').css('max-width', '500px').css('margin-left', '-250px')
+				})
+				
+				riot.mount(dom, 'addcomment', {card: this.card })
+
+			}.bind(this), 1)
+		}
+		reportissue(e) {
+
+			e.preventUpdate = true
+			var dom = document.createElement('reportissue')
+			setTimeout(function(){
+				app.setmodal(dom, function(modal){
+					modal.css('overflow-y', 'auto').css('max-width', '500px').css('margin-left', '-250px')
+				}, false)
+				
+				riot.mount(dom, 'reportissue', {card: this.card })
+
+			}.bind(this), 1)
+		}
+
+
+		addcard(e) {
+			e.preventUpdate = true
+			var card        = this.card 
+			var qty         = (this.deck.cards[card.id] + 1 || 1)
+			
+			
+			$(this.root).find('.total_in_deck').html(qty)
+			this.deck.dirty = 1
+			this.deck.cards[card.id] = qty
+			if(this.mnt) this.mnt.update()
+			app.trigger('deckchange')	
+			app.save()
+		}
+
+		removecard(e) {
+			e.preventUpdate = true
+			var card        = this.card  
+			var qty         = Math.max((this.deck.cards[card.id] - 1 || 0),0)
+			
+			$(this.root).find('.total_in_deck').html(qty)
+
+			this.deck.dirty = 1
+			this.deck.cards[card.id] = qty
+			if(this.mnt) this.mnt.update()
+			app.trigger('deckchange')	
+			app.save()
+		}
+
+
+
+		this.on('unmount', function(){
+			if(this.hammer) this.hammer.off()
+			$(document).off('keyup.card')
+		})
+
+		this.on('mount', function(){
+
+			// Ensure card is part of path
+			if(window.location.hash.indexOf('card') == -1) {
+				riot.route(window.location.hash.split('#')[1] + '/card')				
+			}
+
+			// Bind touch events
+			this.hammer = new Hammer(this.root)
+
+			this.hammer
+				.on("swipeleft", function(e){ this.next(e) }.bind(this))
+				.on("swiperight", function(e){ this.prev(e) }.bind(this))
+
+			$(document).off('keyup.card').on('keyup.card',function(e){
+				e.preventDefault()
+
+				switch(e.key){
+					case 'ArrowLeft': 
+						this.prev(e)
+						break
+
+					case 'ArrowRight': 
+						this.next(e)
+						break
+
+					case 'ArrowUp':
+						this.addcard(e)
+						break
+
+					case 'ArrowDown':
+						this.removecard(e)
+						break
+
+					case 'Escape':
+						app.hidemodal()
+						break;
+
+					default: return
+				}
+			}.bind(this))
+
+			this.has_ruling = this.card.rulings
+
+			// Get the card info + download image
+			app.getcardinfo(this.card.id, function(cardinfo){
+	
+				this.cardinfo = cardinfo
+
+				if(this.card.burnable && cardinfo.text.indexOf('BURNABLE') == -1) {
+					cardinfo.text += '\n[BURNABLE] Burnable'
+				}
+				
+				// Render card history
+				var history = []
+
+				if(cardinfo.text_alt) {
+					this.has_alt = 1
+
+					history.push({
+						label: 'Revised',
+						html: diffString(cardinfo.history ? cardinfo.history[0].text : cardinfo.text, cardinfo.text_alt).trim()
+					})
+				}
+
+				if(cardinfo.rarity) {
+					this.rarity = cardinfo.rarity.split(', ')
+				}
+
+				if(cardinfo.history) {
+					for(var i = 0; i < cardinfo.history.length; i++) {
+						var nextversion = cardinfo.history[i+1]
+						var version = cardinfo.history[i]
+						history.push({
+							label: version.expansion + ' - ' + version.date,
+							html: nextversion ? diffString(nextversion.text, version.text.trim()) : version.text
+						})
+					}
+				}
+
+				var history_html = ''
+				history.forEach(function(h){
+					history_html += '<p style="margin-bottom:14px;"><label class="history_label">' + h.label + '</label><br/>' + h.html + '</p>'
+				})
+
+				this.alt_diff.innerHTML = history_html
+
+				if(history.length) {
+					this.has_history = 1
+				}
+
+				this.update()
+				componentHandler.upgradeDom();
+
+				var img = new Image()
+
+				img.onload = function(){
+					// Append image on load
+					$(this.root).find('.card-image').html(img)
+
+					// Pre-download next card info + image
+					if(this.nextcard) {
+						app.getcardinfo(this.nextcard.id, function(cardinfo){
+							var img = new Image()
+							var src 
+							if(parseInt(app.get_user_setting('use_old_cards'))) {
+								src =  'cardimagesold/' + cardinfo.imagefile + '.jpg' + (~window.location.hostname.indexOf('.xdev') ? '?' + Math.random():'?4')
+							}
+							else {
+								src =  'cardimages/' + cardinfo.imagefile + '.jpg' + (~window.location.hostname.indexOf('.xdev') ? '?' + Math.random():'?4')
+							}
+							img.src = app.root + src
+						})
+					}
+				}.bind(this)			
+
+				img.onerror = function(){
+					// Remove image
+					$(this.root).find('.image-holder').remove()
+				}.bind(this)
+
+				var src 
+				if(parseInt(app.get_user_setting('use_old_cards'))) {
+					src =  'cardimagesold/' + cardinfo.imagefile + '.jpg' + (~window.location.hostname.indexOf('.xdev') ? '?' + Math.random():'?4')
+				}
+				else {
+					src =  'cardimages/' + cardinfo.imagefile + '.jpg' + (~window.location.hostname.indexOf('.xdev') ? '?'+ Math.random():'?4')
+				}
+				img.src = app.root + src	
+
+				// Bind toggle image
+				$(this.root).find('.card-image').on(app.clickevent == 'touch' ? 'click' : 'dblclick', function(){
+					if( ~img.src.indexOf('cardimagesold')) {
+						img.src = img.src.replace('cardimagesold/', 'cardimages/')
+					}
+					else {
+						img.src = img.src.replace('cardimages/', 'cardimagesold/')
+					}
+				})	
+			}.bind(this))
+
+
+
+		})
+
+
+	</script>
+
+	<style>
+	card ins {
+		text-decoration: none;
+    	color: green;		
+	}
+
+	card del {
+		color: #CCC;
+	}
+
+	.card_score{
+	    float: right;
+	    margin-left: 5px;
+	    margin-top: 2px;		
+	}
+
+	.history_label {
+		display: inline-block;
+	    color: #777;
+	    background: #F5F5F5;
+	    border-radius: 4px;
+	    text-align: center;
+	    margin-bottom: 8px;
+	    width: 100%;
+	    /* line-height: 260%; */
+	    padding: 10px 0;	
+	}
+
+	.card-title{
+		margin: 0;
+    	padding: 18px 14px;
+	}
+
+	card .addcomment{
+    	right: 10px;	
+    	margin-top: 10px;
+    	color: #CCC;
+    	position: absolute;
+	}
+	</style>
+
+</card>

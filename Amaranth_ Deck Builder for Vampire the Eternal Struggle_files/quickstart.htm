@@ -1,0 +1,33 @@
+<quickstart>
+
+	<section class="section--center">
+		<div class="mdl-card__supporting-text">
+			<h4>Quickstart Decks</h4>
+			<p>These decks are designed to be both accessible to new players and competitive. They're 60 - 70 cards in size and avoid complex cards. 
+				These are great to use when trying the game for the first time or showing the game to new players.</p>
+		</div>
+		<div class="mdl-grid">
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp" each={ deck in decks }  onclick={ showdeck }>
+			  <div class="mdl-card__supporting-text">
+			    <h4>{ deck.title.split('(')[0] } </h4>
+			  	{ deck.description.split('\n')[0].split('.')[0] + '.' }  
+			  </div>
+			</div>
+		
+		</div>
+	</section>
+
+
+	<script>
+
+	this.decks = opts.decks 
+
+	showdeck(e){
+		e.preventUpdate = true
+		riot.route('/deck/' + e.item.deck.uuid)
+	} 
+
+
+	</script>
+</quickstart>

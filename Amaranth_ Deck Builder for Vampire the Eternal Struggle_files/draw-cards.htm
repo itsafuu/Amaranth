@@ -1,0 +1,238 @@
+<draw-cards class="mdl-grid">
+
+	<div class="mdl-cell mdl-cell--10-col mdl-cell--6-col-tablet mdl-cell--3-col-phone " style="min-height:0;">
+		
+		<h2 class="mdl-card__title-text">Test Draw</h2>
+
+	</div>
+
+	<div class="mdl-cell mdl-cell--2-col mdl-cell--2-col-tablet mdl-cell--1-col-phone " style="min-height:0;">
+		
+		<button class="redraw-button deck-button mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onclick={ redraw } >
+			<i class="material-icons" onclick={ redraw }  >&#xE042;</i>
+		</button>
+	</div>
+
+
+
+	<div class="deck-crypt mdl-cell mdl-cell--6-col  mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+		
+		<div class="picker-type">{ uncontrolled.length } Uncontrolled</div>
+
+		<div class="picker-list mdl-list" if={ uncontrolled.length }>
+			<div class="mdl-list__item" no-reorder each={ uncontrolled } data-id="{ id }">
+				<span class="mdl-list__item-primary-content" onclick={ showcryptcard }>
+					<div>{ name } <span class="clan-name"> { clan }:{ group }</span><br/>
+						<small class="crypt-details">
+							<span class="capacity">{ capacity }</span>  <rawupdate html={ icons } ></rawupdate>
+						</small>
+					</div>
+				</span>
+<!-- 				<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ trashcryptdraw }>
+					<i class="material-icons">&#xE042;</i>				
+				</button> 
+ -->				<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ trashcryptdraw }>
+					<i class="material-icons">&#xE14C;</i>
+				</button> 
+			</div>
+		</div>
+
+			<button class="draw-button mdl-button mdl-js-button mdl-button--raised" onclick={ drawcrypt }  if={ this.library.length }>
+				Draw Crypt ({ crypt.length })
+			</button>
+
+
+		<!-- <div class="picker-type">{ crypt.length } Crypt</div> -->
+
+
+	</div>
+
+
+	<div class="deck-library mdl-cell mdl-cell--6-col  mdl-cell--4-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+	
+		<div class="picker-type">{ hand.length } Hand</div>
+
+		<div class="picker-list mdl-list" if={ hand.length }>
+			<div class="mdl-list__item"	no-reorder each={ hand }>
+				<span class="mdl-list__item-primary-content" onclick={ showlibcard }>
+					<span>{ name }</span>
+				</span>
+
+<!-- 				<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ trashlibdraw }>
+					<i class="material-icons">&#xE042;</i>				
+				</button> 
+ -->
+				<button if={ deck } class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ trashlibdraw }>
+					<i class="material-icons">&#xE14C;</i>
+				</button> 
+			</div>
+
+		</div>
+
+
+		<!-- <div class="picker-type">{ library.length } Library</div> -->
+
+		<div class="picker-type">{ ashheap.length } Ash Heap</div>
+
+
+		<button class="draw-button mdl-button mdl-js-button mdl-button--raised" onclick={ drawlibrary } if={ this.library.length }>
+			Draw Library ({ library.length })
+		</button>
+
+
+
+
+	</div>
+
+	<div class="btn-done mdl-cell mdl-cell--6-col  mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+		<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"  onclick={ done } style="width:100%; ">
+			Done
+		</button>
+	</div>	
+
+
+	<script>
+
+		this.deck         = opts.deck 
+
+		this.crypt        = []
+		this.library      = []
+		this.ashheap      = []
+
+		this.uncontrolled = []
+		this.hand         = []
+
+		done(e){
+			app.hidemodal()
+			this.unmount()
+		}
+
+		redraw(e) {
+
+			e.stopPropagation()
+			console.log('redraw')
+
+			this.crypt        = []
+			this.library      = []
+			this.ashheap      = []
+
+			this.uncontrolled = []
+			this.hand         = []
+
+			e.preventUpdate = true
+			
+			this.randomise()
+		}
+
+		drawcrypt(e) {
+			if(this.crypt.length) {
+				this.uncontrolled.push(
+					this.crypt.shift()
+				)
+			}
+		}
+
+		drawlibrary(e) {
+			if(this.library.length) {
+				this.hand.push(
+					this.library.shift()
+				)
+			}
+		}
+
+		trashcrypt(e) {
+			var item = e.item 
+			var i = this.uncontrolled.indexOf(item)
+
+			// Help with dom
+			//$(e.target).parents('.mdl-list__item:first').remove()
+
+			this.ashheap.push(
+				this.uncontrolled.splice(i, 1)
+			)
+		}
+
+		trashcryptdraw(e) {
+			this.trashcrypt(e)
+			this.drawcrypt()
+		}
+
+
+		trashlib(e) {
+			var item = e.item 
+			var i = this.hand.indexOf(item)
+
+			// Help with dom
+			// $(e.target).parents('.mdl-list__item:first').remove()
+
+			this.ashheap.push(
+				this.hand.splice(i, 1)
+			)
+
+		}
+
+		trashlibdraw(e){
+			this.trashlib(e)
+			this.drawlibrary()
+		}
+
+		randomise(){
+
+			var cards = this.deck.cards
+
+			for(id in cards) {
+
+				var qty = parseInt(cards[id])
+				var card = cardindex[id]
+
+				if(card) {				
+					// Library
+					if(card.type != 'Vampire' && card.type != 'Imbued') {
+						for(var i = 0; i < qty; i++) {
+							this.library.push(
+								card
+							)
+						}
+					} 
+
+					// Crypt
+					else {
+						for(var i = 0; i < qty; i++) {
+							this.crypt.push(
+								card
+							)
+						}
+					}	
+				}
+
+			}
+
+			// Shuffle stacks
+			shuffleArray(this.library)
+			shuffleArray(this.crypt)
+
+			// Hand
+			for(var i = 0; i < 7; i++) {
+				this.drawlibrary()
+			}
+
+			// Crypt
+			for(var i = 0; i < 4; i++) {
+				this.drawcrypt()
+			}
+
+			this.update()
+		}
+
+		this.on('mount', function(e){
+			this.randomise()
+		})
+
+		this.on('unmount', function(){
+		//	this.hammer.off()
+		})
+
+
+	</script>
+
+</draw-cards>

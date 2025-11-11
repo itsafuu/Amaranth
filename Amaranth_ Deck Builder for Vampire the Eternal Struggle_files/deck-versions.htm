@@ -1,0 +1,311 @@
+<deck-versions class="mdl-grid mdl-grid--no-spacing">
+
+	<div class="mdl-cell mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--4-col-phone  mdl-color--blue-grey-900">
+
+
+		<div class="mdl-list__item mdl-button mdl-color-text--grey-600"  onclick={ setcurrent }>
+			<span class="mdl-list__item-primary-content ">
+				Current
+			</span> 
+		</div>
+
+		<div class="mdl-list__item deck-version__version mdl-button mdl-color-text--grey-600" no-reorder each={ version in versions } data-id="{ id }" onclick={ setversion }>
+			<span class="mdl-list__item-primary-content">
+				{ version.title || version.number }
+				<small>{ version.comments }</small>
+			</span>
+
+			<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ deleteversion } if={ false }>
+				<i class="material-icons">&#xE14C;</i>
+			</button> 
+		</div>
+
+
+		<div class="mdl-list__item mdl-button mdl-color-text--grey-500" if={ false }>
+			<span class="mdl-list__item-primary-content " onclick={ showcryptcard }>
+				<i class="material-icons">add</i> New
+			</span>
+		</div>
+
+	</div>
+
+
+	<div class="mdl-cell mdl-cell--10-col mdl-cell--7-col-tablet mdl-cell--4-col-phone">
+
+
+		<div class="mdl-grid">
+
+			<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-color--white">
+			
+				<h5 style="margin:0;">
+					<span if={ version.number } style="float:right;font-weight: 200;" class="mdl-color-text--grey-400">{ version.date }</span>
+					<span if={ !version.number }>Current Version</span>
+					<span if={ version.number && !canedittitle }>{ version.title || 'Version ' + version.number }</span>
+
+				</h5>
+
+				<div if={ version.number && canedittitle} class="mdl-textfield mdl-js-textfield" style="margin:-24px 0;">
+					<input class="mdl-textfield__input" name="title" type="text" value="{ version.title }" onkeyup={ setvalue } style="font-size:20px;"/>
+				</div>
+
+
+
+				<div class="mdl-textfield mdl-js-textfield { version.comments ? 'is-dirty' : ''}" style="width: 100%;" if={ version.number }>
+					<textarea class="mdl-textfield__input" name="comments" type="text" rows="1" maxrows="30" id="versioncomments" onfocus={ autosize } onblur={ clearsize } onkeyup={ autosize_and_set }>{ version.comments }</textarea>
+					<label class="mdl-textfield__label" for="versioncomments">Comments</label>
+				</div>	
+
+			</div>
+
+
+
+			<div class="deck-crypt mdl-cell mdl-cell--5-col mdl-cell--3-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+
+
+				<div class="picker-list mdl-list">
+					<div class="picker-type">Crypt</div>
+
+					<div class="mdl-list__item" each={ crypt } data-id="{ id }">
+
+						<span class="mdl-list__item-primary-content" onclick={ showcryptcard }>
+							<div>{ name }</div>
+						</span>
+						<span class="picker-total total_in_deck mdl-list__item-secondary-action" style="color:green;" if={ differences[ id ] > 0 } >+{ differences[ id ] }</span>
+						<span class="picker-total total_in_deck mdl-list__item-secondary-action" style="color:red;" if={ differences[ id ] < 0 } >{ differences[ id ] }</span>
+						<span class="picker-total total_in_deck mdl-list__item-secondary-action">{ version.cards[ id ] || 0 }</span>
+					</div>
+				</div>
+
+			</div>
+
+
+			<div class="deck-versions-diff mdl-cell mdl-cell--5-col mdl-cell--3-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+
+				<div class="picker-list mdl-list" each={ type in cardtypes }>
+					<div class="picker-type" if={ name != 'total' }>{ type }</div>
+
+					<div class="mdl-list__item"	no-reorder each={ library[type] }>
+						<span class="mdl-list__item-primary-content" onclick={ showlibcard }>
+							<span>{ name } <span class="banned" if={ banned }>Banned</span></span>
+						</span>
+
+						<span class="picker-total total_in_deck mdl-list__item-secondary-action" style="color:green;" if={ differences[ id ] > 0 } >+{ differences[ id ] }</span>
+						<span class="picker-total total_in_deck mdl-list__item-secondary-action" style="color:red;" if={ differences[ id ] < 0 } >{ differences[ id ] }</span>
+						<span class="picker-total total_in_deck mdl-list__item-secondary-action" >{ version.cards[ id ] || 0 }</span>
+			
+					</div>
+				</div>
+
+
+			</div>
+
+			<div class="deck-buttons mdl-cell mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--4-col-phone">
+
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"  onclick={ switchversion } if={ this.version.number }>
+					Use
+				</button>
+				
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"  onclick={ newversion } if={ !readonly }>
+					<span if={ version.number }>Copy Version</span>
+					<span if={ !version.number }>Tag This</span>
+				</button>
+
+				<button class="mdl-button mdl-js-button mdl-button--raised" onclick={ cancel } style="margin-bottom: 10px;">
+					Cancel
+				</button>
+
+				<button class="mdl-button mdl-js-button mdl-button--raised" onclick={ deletethisversion } if={ version.number && !readonly }>
+					<i class="material-icons">&#xE872;</i> Delete
+				</button>
+
+			</div>
+
+		</div>
+
+
+	</div>
+
+
+	<script>
+		this.deck         = opts.deck 
+		this.versions     = opts.deck.versions
+		this.version      = opts.deck
+		this.canedittitle = 0
+		this.readonly     = opts.deck.readonly || 0
+
+		this.differences = {}
+
+		this.mixin(amaranth_util.prototype)	
+
+		setvalue(e) {
+			this.version[e.target.name] = String(e.target.value).trim()
+			if(e.keyCode == 13 && e.target.name != 'comments'){
+				return e.target.blur()
+				app.save()
+			}
+			this.update()
+		}
+
+		this.on('mount', function(){
+			this.update()
+		})	
+
+		this.on('update', function(){
+
+			// Combine version cards with deck cards (zeroed)
+			var cards = {}
+			this.differences = {}
+
+			for(var id in this.version.cards) {
+				cards[ id ] = this.version.cards[ id ]
+			}
+
+			for(var id in this.deck.cards) {
+				if(cards[ id ] == undefined) {
+					cards[ id ] = 0
+				}
+			}
+
+			// Set differences for missing cards
+			for(id in cards) {
+				this.differences[id] = (this.version.cards[ id ] || 0) - (this.deck.cards[ id ] || 0)
+			}
+
+			// Render the version
+			this.deck_parser(cards)
+
+			// Update input
+			setTimeout(componentHandler.upgradeDom, 1)
+
+		})	
+
+		setcurrent(e) {
+			this.version = this.deck
+			this.update()
+		}
+
+		setversion(e) {
+			this.version = e.item.version 
+			this.update()
+		}
+
+		deleteversion(e) {
+			e.preventDefault()
+			e.stopPropagation()
+
+			for(var i = 0; i < this.versions.length; i++) {
+				if( this.versions[i] === e.item.version ) {
+					this.versions.splice(i, 1)
+				}
+			}
+			this.update()
+		}
+
+
+		deletethisversion(e) {
+			e.item = {version: this.version}
+			this.deleteversion(e)
+			this.version = this.deck
+		}
+
+
+		cancel(e) {
+			setTimeout(this.unmount, 100)
+			app.hidemodal()
+		}
+
+
+		switchversion(e) {
+			
+			// check the current version exists as a version
+			var current = JSON.stringify(this.deck.cards)
+			var versioned = 0
+
+			// compare using JSON
+			this.versions.forEach(function(version){
+				if(!versioned && current == JSON.stringify(version.cards)) {
+					versioned = 1
+				}
+			})
+
+			var switchversion = function(){
+
+				var cards = {}
+				this.differences = {}
+
+				for(var id in this.version.cards) {
+					cards[ id ] = this.version.cards[ id ]
+				}
+
+				this.deck.cards = cards
+				app.trigger('deckchange')	
+				this.cancel(e)
+			}.bind(this)
+
+
+			if(versioned || this.readonly) {
+				switchversion()
+			}
+			else {
+				swal({
+					type:'warning', 
+					title: 'Warning',
+					html: 'The current version is not tagged. <br/><small>(all changes will be lost unless tagged)</small>',
+					confirmButtonText: 'Replace',
+					cancelButtonText: 'Cancel',
+					confirmButtonColor: 'rgb(214, 48, 57)',
+					showConfirmButton: true,
+					showCancelButton: true,  
+					reverseButtons: true
+				}).then(function(confirmed){			
+					if(confirmed) {
+						switchversion()
+					}
+				}.bind(this), function(dismiss){
+					//
+				}).done()
+
+			}
+
+
+
+		}
+
+		newversion(e) {
+
+			if(!this.deck.versions) {
+				this.deck.versions = []
+				this.versions = this.deck.versions 
+			}
+
+			var version = {}
+			var number = 1 
+
+			if(this.versions) {
+				this.versions.forEach( function(version){
+					if(version.number >= number) {
+						number = version.number + 1 
+					}
+				})				
+			}
+
+
+			version.title  = 'Version ' + number 
+			version.date   = (new Date()).toLocaleDateString(navigator.language)
+			version.number = number
+			version.cards  = {}
+
+			for(key in this.version.cards) {
+				version.cards[key] = this.version.cards[key]
+			}
+
+			this.versions.splice(0, 0, version)
+
+			this.version = version 
+			this.update()
+			
+		}
+		
+	</script>
+
+</deck-versions>

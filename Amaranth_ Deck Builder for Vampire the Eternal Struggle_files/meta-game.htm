@@ -1,0 +1,108 @@
+<meta-game class="mdl-grid">
+
+
+	<div class="mdl-cell mdl-cell--10-col mdl-cell--6-col-tablet mdl-cell--3-col-phone " style="min-height:0;">
+		
+		<h2 class="mdl-card__title-text">Test Seating</h2>
+
+	</div>
+
+	<div class="mdl-cell mdl-cell--2-col mdl-cell--2-col-tablet mdl-cell--1-col-phone " style="min-height:0;">
+		
+		<button class="redraw-button deck-button mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onclick={ randomise } >
+			<i class="material-icons" onclick={ randomise }  >&#xE042;</i>
+		</button>
+	</div>
+
+
+	<div class="mdl-cell mdl-cell--12-col">
+
+		<div class="game-table mdl-shadow--2dp mdl-color--white">
+			<div class="game-table-player { deck.isplayer == 1 ? 'game-table-player_isplayer' : '' }" each={ deck, d in table } style={ calcPlayerCSS(d, table.length) }>
+				<span class="game-table-player-position">{d + 1}</span> { deck.name }</div>
+		</div>
+
+
+	</div>
+
+	<style>
+		meta-game .game-table {
+    		height: 450px;
+    	}
+    	meta-game .game-table-player{
+			margin-top: -70px;
+			margin-left: -70px;
+			width: 140px;
+			min-height: 140px;
+			height: auto;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			line-height: 14px;
+			padding: 20px 10px 34px 10px;
+			box-sizing: border-box;
+    	}
+
+    	@media only screen and (max-height: 700px) {
+	    	meta-game .game-table-player{
+				margin-top: -50px;
+				margin-left: -50px;
+				width: 100px;
+				min-height: 100px;
+			}
+    	}
+
+    	meta-game .game-table-player_isplayer {background-color: rgb(255,215,64);}
+
+	</style>
+
+	<script>
+
+		this.deck = opts.deck 
+
+		this.on('mount', function(){
+			this.randomise()
+			this.update()
+		})
+
+		this.on('update', function(){
+			setTimeout(componentHandler.upgradeDom,1);
+		})
+
+		randomise(){
+
+			var tmp = []
+			var tables = []
+			var tablesize = 5 
+
+			var decks = []
+
+			app.meta.forEach(function(deck){
+				for(var i = 0; i <  (deck.popularity || 1); i++){
+					tmp.push(deck)
+				}
+			})
+
+			shuffleArray(tmp)
+
+			var table = []
+			for(var i = 0; i < tablesize - 1; i++) {
+				table.push(
+					tmp.pop()
+				)
+			}
+
+			table.push({
+				name:  this.deck.name || 'Your Deck',
+				isplayer: 1
+			})
+
+			shuffleArray(table)
+			this.table = table
+
+		}
+
+	</script>
+
+
+</meta-game>

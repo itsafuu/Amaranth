@@ -1,0 +1,77 @@
+<login-status>
+
+	<header class="app-drawer-header">
+		<div class="app-avatar-dropdown" if={ !app.user.id } onclick={ login }>
+			<span>Login / Create Account </span>
+			<div class="mdl-layout-spacer"></div>
+			<button id="accbtn" class="mdl-button mdl-js-button mdl-button--icon" style="visibility: hidden;"></button>
+
+		</div>
+
+
+		<div class="app-avatar-dropdown" if={ app.user.id }>
+			<span>{ app.user.firstname || app.user.email || 'Logged in' } </span>
+			<div class="mdl-layout-spacer"></div>
+			<button id="accbtn" class="mdl-button mdl-js-button mdl-button--icon">
+				<i class="material-icons" role="presentation">&#xE5C5;</i>
+				<span class="visuallyhidden">Accounts</span>
+			</button>
+			<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu" for="accbtn">
+				<li class="mdl-menu__item" onclick={ profile }>Profile</li>
+				<li class="mdl-menu__item" onclick={ logout }>Logout</li>
+			</ul>
+		</div>
+	</header>
+
+	<script>
+		this.on('mount', function(){
+			app.on('loginstatus', this.update)
+			componentHandler.upgradeDom();
+		})
+
+		this.on('update', function(){
+			componentHandler.upgradeDom();
+		})
+
+		logout(){
+			app.syncdecks()
+			app.user = {}
+			app.decks = []
+			app.offset = ''
+			store.set('offset','')
+			app.trigger('loginstatus')
+			app.save()
+			app.callapi('/api/logout', function(){})
+
+			swal({
+				type: 'success',
+				text: 'Logged out.',
+				timer: 2 * 1000
+			}).done()
+			
+			app.hidedrawer()
+			setTimeout(function(){
+				riot.route('/')
+			}, 300)
+
+
+		}
+
+		profile(e) {
+			e.preventUpdate = true
+			app.hidedrawer()	
+			app.append('profile', { user: app.user })
+		}
+
+		login(e){
+			e.preventUpdate = true 
+			app.login(function(){
+				app.trigger('loginstatus')
+				app.hidedrawer()
+				setTimeout(function(){riot.route('/decks')}, 300)
+
+			})
+		}
+	</script>
+
+</login-status>

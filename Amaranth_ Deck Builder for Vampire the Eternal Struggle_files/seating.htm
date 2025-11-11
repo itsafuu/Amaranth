@@ -1,0 +1,320 @@
+<seating class="mdl-grid">
+
+
+		<!-- <h3 class="mdl-card__title-text">Seating</h2> -->
+
+	<div class="mdl-cell mdl-cell--6-col  mdl-shadow--2dp mdl-color--white">
+
+
+
+		<div class="mdl-list" style="padding:10px;">
+				
+				<div class="dice" onclick={ randomisedice }>{ dicenumber || 'Dice' }</div>
+
+				<h4>Players</h4>
+
+				<div class="mdl-list__item" each={ players }>
+
+				<span class="mdl-list__item-primary-content" contenteditable="true" onkeydown="{ keydown }" style="min-height: 24px;" onblur="{ changename }">
+					{name}
+				</span>
+
+				<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action players_removeplayer" onclick={ removeplayer }>
+					<i class="material-icons">&#xE15C;</i>
+				</button>				
+
+				<span class="mdl-list__item-secondary-action">
+					<label class="mdl-switch mdl-js-switch" for="player-{ id }">
+					  <input type="checkbox" id="player-{ id }" class="mdl-switch__input" onchange={ toggle } checked={ active }>
+					  <span class="mdl-switch__label"></span>
+					</label>
+            	</span>
+
+			</div>
+
+		</div>
+
+		<div class="mdl-list__item">
+			<span class="mdl-list__item-primary-content">
+
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"  onclick={ randomise }>
+					Randomise Seating
+				</button>
+				
+			</span>
+			<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-list__item-secondary-action" onclick={ addplayer }>
+				<i class="material-icons">&#xE145;</i>
+			</button>	
+		</div>
+	</div>
+
+
+	<div class="mdl-cell mdl-cell--6-col">
+
+		<div class="game-table mdl-shadow--2dp mdl-color--white" each={ table, i in tables }>
+			<span class="game-table-header">Table {i + 1}</span>
+
+			<div class="game-table-player { player.id == -1 ? 'game-table-player_temp' : '' }" each={ player, p in table } style={ calcPlayerCSS(p, table.length) }>
+				<span class="game-table-player-position">{p + 1}</span> { player.name }</div>
+		</div>
+
+
+	</div>
+
+	<style>
+		seating h4 {
+		    margin-top: 0;
+		    border-bottom: 1px dotted #CCC;
+		    padding-bottom: 10px;
+	        margin-bottom: 4px;
+		}
+
+		seating .mdl-list__item{
+			padding: 10px 14px;
+		}
+
+		.dice {
+			background: #444;
+			float: right;
+			height: 36px;
+			width: 36px;
+			text-align: center;
+			line-height: 36px;
+			color: #FFF;
+			border-radius: 6px;
+			box-shadow: 0 3px 2px rgba(0,0,0,0.3);
+			margin-top: -2px;
+			margin-right: 5px;
+			 transition: transform 0.5s ease; 
+		}
+
+		.dice.spin{
+			-webkit-animation: spin 0.1s infinite linear;
+		}
+
+		@-moz-keyframes spin {
+		    from { -moz-transform: rotate(0deg); }
+		    to { -moz-transform: rotate(360deg); }
+		}
+		@-webkit-keyframes spin {
+		    from { -webkit-transform: rotate(0deg); }
+		    to { -webkit-transform: rotate(360deg); }
+		}
+		@keyframes spin {
+		    from {transform:rotate(0deg);}
+		    to {transform:rotate(360deg);}
+		}
+
+		.game-table {
+			height: 300px;
+			margin-bottom: 10px;
+			background: #EEE;
+			position: relative;
+			border-radius: 500px;
+    		background: white;			
+		}
+
+
+		.game-table-header{
+			text-transform: uppercase;
+			font-size: 90%;
+		}
+		.players_removeplayer{
+			margin-right: 14px;
+			color: #CCC;
+		}
+
+		.game-table-player{
+			background: #CCC;
+			width: 80px;
+			height: 80px;
+			line-height: 80px;
+			text-align: center;
+			position: absolute;
+			vertical-align: middle;
+			border-radius: 80px; 
+			margin-top: -40px;
+			margin-left: -40px;
+			font-size: 90%;
+			font-weight: bold;
+			_text-transform: uppercase;
+			color: #444;
+		}
+
+		.game-table-player_temp{
+			background: #EEE;
+			color: #777;
+		}
+
+		.game-table-player-position{
+			position: absolute;
+			_color: white;
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			text-align: center;
+			line-height: 20px;
+			border-radius: 20px;
+			background: #999;
+			bottom: 8px;
+			left: 50%;
+			margin-left: -10px;
+			font-weight: 400;
+
+			background: white;
+			color: #999;
+			font-size: 120%;
+		}
+
+
+	</style>
+
+	<script>
+
+		this.players = store.get('players') || [
+			{name: 'Player 1', active: 1},
+			{name: 'Player 2', active: 1},
+			{name: 'Player 3', active: 1},
+			{name: 'Player 4', active: 1},
+			{name: 'Player 5', active: 1}
+		]
+
+		this.on('mount', function(){
+			this.players.forEach(function(player){
+				if(!player.id) {
+					player['id']= UUID.generate()
+				}
+			})
+			this.update()
+		})
+
+		this.on('update', function(){
+			setTimeout(componentHandler.upgradeDom,1);
+		})
+
+		randomisedice(e) {
+			this.dicenumber = Math.ceil(20 * Math.random())
+
+			e.target.className = 'dice spin'
+
+			setTimeout(function(){
+				e.target.className = 'dice'
+			}, 300)
+
+		}
+
+
+		keydown(e) {
+			switch(e.keyCode) {
+				case 13:
+					e.preventDefault()
+					e.target.blur()
+					return 
+				case 27:
+					e.preventDefault()
+					$(e.target).text(e.item.name)
+					e.target.blur()
+					return
+			}
+			return true 
+
+		}
+
+		addplayer(e){
+			var name = 'Player ' + (this.players.length + 1)
+
+			this.players.push({
+				id: UUID.generate(),
+				name: name,
+				active: 1
+			})
+			setTimeout(function(){
+				var inp = $(this.root).find('[contenteditable]:last')
+				inp.focus()
+	
+				var range = document.createRange();
+				range.setStart(inp[0].firstChild, 0);
+				range.setEnd(inp[0].firstChild, name.length + 1);
+				selection = window.getSelection();                 
+				selection.removeAllRanges();
+				selection.addRange(range);  
+
+			}.bind(this), 70)
+
+			this.save()	
+		}
+
+		removeplayer(e){
+			for(var i = 0; i < this.players.length; i++){
+				if(e.item == this.players[i]) {
+					this.players.splice(i--, 1)
+				}
+			}
+			this.save()			
+		}
+
+		changename(e){
+			e.item.name = $(e.target).text().trim() || 'The Unnamed'
+			this.save()
+		}
+
+		toggle(e){
+		//	e.preventUpdate = true
+			e.item.active = (e.target.checked ? 1 : 0)
+		//	this.randomise()
+			this.save()
+		}
+
+		save(){
+			store.set('players', this.players)
+		}
+
+		randomise(){
+
+			var tmp = []
+			var tables = []
+
+			this.players.forEach(function(player){
+				if(player.active) { 
+					tmp.push(player)
+				}
+			})
+
+			shuffleArray(tmp)
+
+			// tmp.sort(function(){
+			// 	return Math.random() > Math.random() ? 1 : -1;
+			// })
+
+			var tableSeating = calctables(tmp.length)
+
+			tableSeating.forEach(function(tablesize){
+				var table = []
+				for(var i = 0; i < tablesize; i++) {
+					table.push(
+						tmp.pop()
+					)
+				}
+
+				if(table.length == 3 && tableSeating.length > 1) {
+					table.push({
+						id: -1,
+						name: '+1st Ousted'
+					})
+
+					shuffleArray(table)
+				}
+
+				tables.push(
+					table
+				)
+			})
+
+			this.tables = tables
+
+		}
+
+	</script>
+
+
+</seating>

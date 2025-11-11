@@ -1,0 +1,485 @@
+<twda>
+
+
+	<div class="card-header mdl-color--blue-grey-100">
+		<div class="mdl-grid mdl-grid--no-spacing">
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--1-col-phone">
+				<h5>Tournament Winning Decks <small if={ cards.length } style="position:absolute;"> { decks.length }</small></h5>
+			</div>
+						
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--3-col-phone">
+
+				<label class="mdl-button  mdl-button--icon mdl-js-button" style="float:right; margin-top:5px;" id="sortdecks_btn">
+					<i class="material-icons">&#xE8d5;</i>
+				</label>
+
+				<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="sortdecks_btn">
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="name">Name</li>
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="newest">Newest</li>
+					<li class="mdl-menu__item" onclick={ sortdecksby } data-sort="oldest">Oldest</li>
+				</ul>
+
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable { q ? 'is-dirty' : '' }">
+					<i class="material-icons clear_filter_button" tabindex="2" onclick={ clear } if={ q }>cancel</i>
+
+					<label name="searchglass" class="mdl-button mdl-js-button mdl-button--icon" for="searchdecks">
+						<i class="material-icons">&#xE8B6;</i>
+					</label>
+					<div class="mdl-textfield__expandable-holder">
+						<label class="mdl-textfield__label" for="searchlib">Search...</label>
+						<input class="mdl-textfield__input" type="text" onkeyup={ search } value="" tabindex="1" id="searchdecks">
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- FILTERS -->
+	<div class="mdl-grid">
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">
+			<div class="mdl-selectfield { showdisciplines ? 'is-focused' : ''}" name="disciplinesEl" onclick={ toggledisciplines }> 
+
+				<label class="mdl-selectfield__label" for="typeselect">Disciplines<span if={ discipline.length }>:</span> { discipline.join(' ') }</label>
+				<div class="mdl-selectfield__box" tabindex="1">
+					<i class="material-icons" tabindex="-1">arrow_drop_down</i><span class="mdl-selectfield__box-value" tabindex="0"></span>
+				</div>
+
+				<div class="mdl-selectfield__list-option-box card-filter-disciplines" 
+					style="min-width: 262px;" 
+					onclick={ setdiscipline } onblur={ hidedisciplines } tabindex="-1">
+					<icon class="abo" data-discipline="abo"></icon>
+					<icon class="ani" data-discipline="ani"></icon>
+					<icon class="aus" data-discipline="aus"></icon>
+					<icon class="cel" data-discipline="cel"></icon>
+					<icon class="chi" data-discipline="chi"></icon>
+					<icon class="dai" data-discipline="dai"></icon>
+					<icon class="dem" data-discipline="dem"></icon>
+					<icon class="dom" data-discipline="dom"></icon>
+					<icon class="for" data-discipline="for"></icon>
+					<icon class="mal" data-discipline="mal"></icon>
+					<icon class="mel" data-discipline="mel"></icon>
+					<icon class="myt" data-discipline="myt"></icon>
+					<icon class="nec" data-discipline="nec"></icon>
+					<icon class="obe" data-discipline="obe"></icon>
+					<icon class="obf" data-discipline="obf"></icon>
+					<icon class="obt" data-discipline="obt"></icon>
+					<icon class="pot" data-discipline="pot"></icon>
+					<icon class="pre" data-discipline="pre"></icon>
+					<icon class="pro" data-discipline="pro"></icon>
+					<icon class="qui" data-discipline="qui"></icon>
+					<icon class="san" data-discipline="san"></icon>
+					<icon class="ser" data-discipline="ser"></icon>
+					<icon class="spi" data-discipline="spi"></icon>
+					<icon class="str" data-discipline="str"></icon>
+					<icon class="tem" data-discipline="tem"></icon>
+					<icon class="tha" data-discipline="tha"></icon>
+					<icon class="thn" data-discipline="thn"></icon>
+					<icon class="val" data-discipline="val"></icon>
+					<icon class="vic" data-discipline="vic"></icon>
+					<icon class="vis" data-discipline="vis"></icon>
+				</div>
+			</div>
+		</div>
+
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">
+			<!-- CLAN -->
+			<div class="mdl-selectfield mdl-js-selectfield">
+			  <select id="clanselect" class="mdl-selectfield__select"  onchange={ setfilter } data-filter="clan">
+			    <option value=""></option>
+			    <option value="{ clan.name }" each={ clan in app.clans }>{ clan.name }</option>
+			  </select>
+			  <label class="mdl-selectfield__label" for="clanselect">Clan</label>
+			</div>
+		</div>
+
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">
+			<!-- SECT -->
+			<div class="mdl-selectfield mdl-js-selectfield">
+			  <select id="sectselect" name="clan" class="mdl-selectfield__select" onchange={ setfilter } data-filter="sect">
+			    <option value=""></option>
+			    <option value="{ sect.name }" each={ sect in app.sects }>{ sect.name }</option>
+			  </select>
+			  <label class="mdl-selectfield__label" for="sectselect">Sect</label>
+			</div>
+		</div>
+
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">
+			<!-- TITLE -->
+			<div class="mdl-selectfield mdl-js-selectfield">
+			  <select id="titleselect" name="clan" class="mdl-selectfield__select" onchange={ setfilter } data-filter="title">
+			    <option value=""></option>
+			    <option value="{ title.name }" each={ title in app.titles }>{ title.name }</option>
+			  </select>
+			  <label class="mdl-selectfield__label" for="titleselect">Title</label>
+			</div>
+		</div>
+
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">	
+			<!-- SET -->
+			<div class="mdl-selectfield mdl-js-selectfield">
+			  <select id="setselect" name="clan" class="mdl-selectfield__select" onchange={ setfilter } data-filter="set" >
+			    <option value=""></option>
+			    <option value="{ set.value }" each={ set in app.sets }>{ set.name }</option>
+			  </select>
+			  <label class="mdl-selectfield__label" for="setselect">Set</label>
+			</div>
+		</div>
+		
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">	
+
+			<!-- CARD TYPE -->
+			<div class="mdl-selectfield mdl-js-selectfield">
+			  <select id="typeselect" class="mdl-selectfield__select"  onchange={ setfilter } data-filter="type">
+			    <option value=""></option>
+			    <option value="Crypt">Crypt</option>
+			    <option value="{ type }" each={ type, i in app.cardtypes }>{ type }</option>
+			  </select>
+			  <label class="mdl-selectfield__label" for="typeselect">Card Type</label>
+			</div>
+
+		</div>
+		
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">	
+			<div class="mdl-selectfield mdl-js-selectfield">
+				<select id="category" class="mdl-selectfield__select"  onchange={ setfilter } data-filter="category">
+					<option value=""></option>
+					<option value="Ally">Ally</option>
+					<option value="Bleed">Bleed</option>
+					<option value="Combat">Combat</option>
+					<option value="Toolbox">Toolbox</option>
+					<option value="Wall">Wall</option>
+					<option value="Vote">Vote</option>
+				</select>
+				<label class="mdl-selectfield__label" for="category">Category</label>
+			</div>
+		</div>
+
+		<div class="mdl-cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--4-col-phone">	
+
+			<div class="mdl-grid mdl-grid--no-spacing">
+				<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+					<div class="mdl-selectfield mdl-js-selectfield">
+						<select id="start_year" class="mdl-selectfield__select" onchange={ setfilter }>
+							<option value=""></option>
+							<option value="{ year } " selected={ filters.start_year == year } each={ year in years}>{ year }</option>
+						</select>
+						<label class="mdl-selectfield__label" for="start_year">Start Year</label>
+					</div>
+				</div>
+
+				<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+					<div class="mdl-selectfield mdl-js-selectfield">
+						<select id="end_year" class="mdl-selectfield__select" onchange={ setfilter }>
+							<option value=""></option>
+							<option value="{ year } " selected={ filters.end_year == year } each={ year in years}>{ year }</option>
+						</select>
+						<label class="mdl-selectfield__label" for="end_year">End Year</label>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+				
+
+
+
+	<div class="mdl-tabs is-upgraded">
+		<div class="mdl-tabs__tab-bar">
+			<a onclick={ settab } data-for="decks"      class="mdl-tabs__tab { tab == 'decks'      ? 'is-active' : ''}">Decks</a>
+			<a onclick={ settab } data-for="statistics" class="mdl-tabs__tab { tab == 'statistics' ? 'is-active' : ''}">Statistics</a>
+			<a onclick={ settab } data-for="insights"   class="mdl-tabs__tab { tab == 'insights'   ? 'is-active' : ''}">Insights</a>
+			<a onclick={ settab } data-for="authors"    class="mdl-tabs__tab { tab == 'authors'    ? 'is-active' : ''}">Authors</a>
+		</div>
+
+		<div></div>
+	</div>		
+
+
+	<div class="mdl-grid" show="{ tab == 'insights' }">
+		<view-insights decks={ this.decks } filters={ this.filters } class="mdl-cell mdl-cell--12-col  mdl-cell--8-col-tablet mdl-cell--4-col-phone"></view-insights>
+	</div>
+
+
+	<div class="mdl-grid" show="{ tab == 'statistics' }">
+
+		<div class="mdl-cell mdl-cell--4-col  mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+			
+			<div class="picker-type">Top 10 Crypt</div>
+
+			<div class="mdl-list__item crypt-recommendation" 
+				each={ recommended_crypt } 
+				data-total={recommended_crypt.length} 
+				data-id="{ id }" 
+				no-reorder>
+				
+
+				<span class="mdl-list__item-primary-content" onclick={ showcryptcard } data-id={ id } title="{ score }">
+					{ name }
+				</span>
+
+				<span class="mdl-list__item-secondary-content" data-id={ id }>
+					<small>x{ Math.round(recommended_qty) }</small>
+				</span>
+			</div>
+
+
+		</div>
+
+		<div class="mdl-cell mdl-cell--4-col  mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+			<div class="picker-type">Top 10 Library</div>
+
+			<div class="mdl-list__item" 
+				each={ recommended_library } 
+				data-total={recommended_library.length} 
+				data-id="{ id }" 
+				no-reorder>
+				
+
+				<span class="mdl-list__item-primary-content" onclick={ showcryptcard } data-id={ id }  title="{ score }">
+					{ name }
+				</span>
+
+				<span class="mdl-list__item-secondary-content" data-id={ id }>
+					<small>x{ Math.round(recommended_qty) }</small>
+				</span>
+
+			</div>
+
+
+		</div>
+
+		<div class="mdl-cell mdl-cell--4-col  mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+			<div class="picker-type">Top 10 Clans</div>
+
+
+			<div class="mdl-list__item crypt-recommendation" 
+				each={ recommended_clan } 
+				data-total={recommended_clan.length}  
+				no-reorder>
+				
+
+				<span class="mdl-list__item-primary-content" data-id={ id }>
+					<div title="{ score }">{ name }</div>
+				</span>
+
+			</div>
+		</div>
+
+	</div>
+
+	<div class="card-content"  onscroll={ onscroll } show="{ tab == 'decks' }">
+		<div class="mdl-list mdl-color--white mdl-shadow--2dp ">
+			<div class="mdl-list__item"	each={ showdecks || decks } no-reorder="true" onclick={ viewdeck }>
+				<span class="mdl-list__item-primary-content">
+					<span>{ title }</span>
+				</span>
+
+				<span class="mdl-list__item-secondary-content">
+					<span>{ author } - { date }</span>
+				</span>
+
+			
+				<button class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ addcard }>
+					<i class="material-icons">&#xE315;</i>
+				</button>
+
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+
+	this.mixin(amaranth_util.prototype)	
+	this.mixin(twda.prototype)	
+
+	this.q         = ''
+	this.decks     = app.twda 
+	this.deckorder = app.default_deckorder
+	this.tab       = 'decks'
+	this.filters = {}
+
+	this.years = []
+
+	var years = (new Date).getFullYear() - 1996
+	for(var i = 0; i < years; i++){
+		this.years.push(1996 + i)
+	}
+
+	this.chunksize = 100
+
+	if(this.decks.length > this.chunksize) {
+		this.showdecks = this.decks.slice(0, this.chunksize)
+	} else {
+		this.showdecks = null 
+	}
+
+	settab(e) {
+		this.tab = e.target.getAttribute('data-for')
+	}
+
+
+	newdeck(e){
+		e.preventUpdate = true
+		var deck = app.newdeck()
+		riot.route('/deck/' + deck.uuid)
+	} 
+
+
+
+	viewdeck(e){
+		e.preventUpdate = true
+	//	this.update()
+		this.show_tournment_deck(e.item, this.decks)
+	} 
+
+	clear(e){
+		//e.preventUpdate = true 
+		this.q = ''
+		this.filter()
+		store.set('twda.search', this.q)
+	}
+
+	search(e){
+		e.preventUpdate = true 
+		this.q = e.target.value.trim() 
+
+		this.filter()
+		store.set('twda.search', this.q)
+	}
+
+	refresh(e) {		
+		swal({type:'', title: '', text: 'Syncing decks from cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
+		app.syncdecks(true)
+	}
+
+	onscroll(e) {
+
+	//	this.hideoptions(e)
+
+		e.preventUpdate   = true
+		var chunkevery    = this.chunksize 
+		var elementheight = 45
+		var chunk         = Math.floor(e.target.scrollTop / (chunkevery * elementheight)) 
+
+		if(chunk > (this.lastchunk || 0)) {
+			this.showdecks  = this.decks.slice(0, chunkevery * (chunk + 1))
+			this.lastchunk  = chunk
+			e.preventUpdate = false
+
+
+		//	console.log('CHUNK DECKS', chunkevery * (chunk + 1), this.showdecks)
+		}
+	}
+
+
+
+	filter(){
+		var q     = (this.q || '').toLowerCase()
+		var words = q.match(/(\w+)/gi)
+		var cards = []
+
+		var filters = this.filters
+		var hash    = []
+
+		filters['q'] = q
+		
+		for(key in filters){
+			if( filters[key] ) hash.push(filters[key])
+		}
+
+		clearInterval(this.filterInt)
+		this.filterInt = setTimeout(function(){ 
+
+			// Work with card ids here
+			var cards = this.find_cards(filters).map(function(card){ return card.id })
+
+			if(hash.length) {
+
+				this.decks = app.twda.filter(function(deck){
+					var keywords = (deck.title + ' ' + deck.description +  ' ' + deck.author).toLowerCase()
+
+					// Match on any cards
+					if(cards.length && deck.cards) {
+						var m = 0
+						for(var i = 0; i < cards.length; i++){
+							var id = cards[i]
+							if(deck.cards[id]) {
+								m++
+								return true
+							}							
+						}
+					}
+
+					// Match on name / description
+					if(
+					   words && 
+					   ~keywords.indexOf(words[0] || '') &&
+					   ~keywords.indexOf(words[1] || '') &&
+					   ~keywords.indexOf(words[2] || '') &&
+					   ~keywords.indexOf(words[3] || '') &&
+					   ~keywords.indexOf(words[4] || '') 
+				 	) {
+						return true
+					}
+
+
+								
+				})
+
+			}
+
+			else {
+				this.decks = app.twda
+			}
+
+			if(this.decks.length > this.chunksize) {
+				this.showdecks = this.decks.slice(0, this.chunksize)
+				this.lastchunk = 0
+			} else {
+				this.showdecks = null 
+				this.lastchunk = 0
+			}
+
+			this.update()
+		}.bind(this), 100)
+
+	}
+
+	this.on('update', function(){
+		// if(this.deckorder) app.sortdecks(this.decks, this.deckorder)
+
+		this.recommended_clan    = this.recommend_clan({ all: true, decks: this.decks}).slice(0, 10)
+		this.recommended_crypt   = this.recommend_crypt({ all: true, decks: this.decks}).slice(0, 10)
+		this.recommended_library = this.recommend_library({ all: true, decks: this.decks}).slice(0, 10)
+
+	})
+
+	this.on('mount', function(){
+		this.q = store.get('twda.search') || ''
+		this.searchdecks.value = this.q
+
+		componentHandler.upgradeDom();
+
+	//	app.syncdecks()
+
+		if(this.q) {
+			this.filter()
+			this.update()
+		}
+
+	//	this.librarycards = window.cards.filter(function(card){ return card.type != 'Vampire' && card.type != 'Imbued' })
+	})
+
+	this.on('unmount', function(){
+		app.off('decks', this.update)
+	})
+
+	</script>
+
+</twda>

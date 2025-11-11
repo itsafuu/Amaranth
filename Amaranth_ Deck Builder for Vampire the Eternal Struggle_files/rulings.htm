@@ -1,0 +1,163 @@
+<rulings>
+
+
+	<div class="card-header mdl-color--blue-grey-100">
+		<div class="mdl-grid mdl-grid--no-spacing">
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--1-col-phone">
+				<h5>Rulings</h5>
+			</div>
+
+
+						
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--3-col-phone">
+
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable { q ? 'is-dirty' : '' }">
+					<i class="material-icons clear_filter_button" tabindex="2" onclick={ clear } if={ q }>cancel</i>
+
+					<label name="searchglass" class="mdl-button mdl-js-button mdl-button--icon" for="searchdecks">
+						<i class="material-icons">&#xE8B6;</i>
+					</label>
+					<div class="mdl-textfield__expandable-holder">
+						<label class="mdl-textfield__label" for="searchlib">Search...</label>
+						<input class="mdl-textfield__input" type="text" onkeyup={ search } value="" tabindex="1" id="searchdecks">
+					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+
+
+	<div class="card-content">
+		<div class="mdl-card__supporting-text">This is a simple searchable list of all rulings. Rulings are also displayed when viewing a card if present.</div>
+
+		<div class="mdl-list mdl-color--white mdl-shadow--2dp ">
+			<div class="mdl-list__item"	each={ rulings } no-reorder="true" onclick={ editdeck }>
+
+
+				<span class="mdl-list__item-primary-content">
+					<div>
+						<span style="line-height: 150%">{ card_names }</span>
+						<p style="margin-bottom: 0">{ text }<br/><small class="mdl-color-text--grey-600">{ references }</small></p>
+					</div>
+					
+				</span>
+
+			
+			</div>
+		</div>
+	</div>
+
+
+
+	<script>
+	// Grab all library cards
+	this.q         = ''
+	this.rulings     = app.rulings 
+
+
+	clear(e){
+		//e.preventUpdate = true 
+		this.q = ''
+		this.filter()
+		store.set('deck.search', this.q)
+	}
+
+	search(e){
+		e.preventUpdate = true 
+		this.q = e.target.value.trim() 
+
+		this.filter()
+		store.set('deck.search', this.q)
+	}
+
+	refresh(e) {		
+		swal({type:'', title: '', text: 'Syncing decks from cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
+		app.syncdecks(true)
+	}
+
+
+	filter(){
+		var q     = (this.q || '').toLowerCase()
+		var words = q.match(/(\w+)/gi)
+		var cards = []
+
+		clearInterval(this.filterInt)
+		this.filterInt = setTimeout(function(){ 
+
+			// Search cards
+
+			if(words) {
+
+				app.librarycards(function(card){ 
+					
+					var keywords = (card.name + ' ' + (card.clan || '') + ' ' + card.type).toLowerCase()
+
+					if(
+						~keywords.indexOf(words[0] || '') && 
+						~keywords.indexOf(words[1] || '') && 
+						~keywords.indexOf(words[2] || '') && 
+						~keywords.indexOf(words[3] || '')
+					) {
+						cards.push(card.id)
+					}
+				})
+
+				app.cryptcards(function(card){ 
+
+					var keywords = (card.name + ' ' + (card.clan || '') + ' ' + card.type).toLowerCase()
+
+					if(
+						~keywords.indexOf(words[0] || '') && 
+						~keywords.indexOf(words[1] || '') && 
+						~keywords.indexOf(words[2] || '') && 
+						~keywords.indexOf(words[3] || '')
+					) {
+						cards.push(card.id)
+					}
+				})
+
+				this.rulings = app.rulings.filter(function(ruling){
+					var keywords = (ruling.text + ' ' + ruling.card_names+ ' ' + ruling.references).toLowerCase()
+
+					// Match on name / description
+					if(
+					   ~keywords.indexOf(words[0] || '') &&
+					   ~keywords.indexOf(words[1] || '') &&
+					   ~keywords.indexOf(words[2] || '') &&
+					   ~keywords.indexOf(words[3] || '') &&
+					   ~keywords.indexOf(words[4] || '') 
+				 	) {
+						return true
+					}
+
+					// Match on cards
+					if(cards.length) {
+						for(var i = 0; i < cards.length; i++){
+							var id = cards[i]
+							if(ruling.cards[id]) {
+								return true
+							}							
+						}
+					}
+								
+				})
+			}
+			else {
+				this.rulings = app.rulings
+			}
+
+			this.update()
+		}.bind(this), 100)
+
+	}
+
+	
+	this.on('mount', function(){
+		componentHandler.upgradeDom();	
+	})
+	</script>
+
+</rulings>

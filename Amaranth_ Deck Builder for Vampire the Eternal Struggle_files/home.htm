@@ -1,0 +1,137 @@
+<home>
+
+	<section class="section--center">
+		<div class="mdl-grid">
+
+
+			<div class="mdl-c ard mdl-color--white mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+			  <div class="mdl-card__supporting-text">
+			    <h4>Welcome</h4>
+			    Amaranth Deck Builder for Vampire: The Eternal Struggle.
+			    You can use this tool to create, share and print decks for casual play or tournaments that allow proxy cards.
+			  </div>
+			</div>
+
+
+			<div class="mdl-color--white mdl-cell mdl-cell--6-col mdl-shadow--2dp" onclick={ showdecks }>
+			  <div class="mdl-card__supporting-text">
+			    
+			    <h4>Decks</h4>
+			
+			    Create, manage and print your decks. 
+			  </div>
+			  <div class="mdl-card__actions">
+			    <a href="#" class="mdl-button mdl-color-text--primary" if={ app.decks && app.decks.length }  onclick={ showdecks }>View Decks</a>
+			    <a href="#" class="mdl-button mdl-color-text--primary" onclick={ newdeck }>Create Deck</a>
+			  </div>
+			</div>
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp"  onclick={ showlib }>
+			  <div class="mdl-card__supporting-text">
+			    <h4>Library</h4>
+			    Search / browse all library cards.
+			  </div>
+			</div>
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp" onclick={ showcrypt } >
+			  <div class="mdl-card__supporting-text">
+			    <h4>Crypt</h4>
+			    Search / browse all crypt cards.
+			  </div>
+			</div>
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp" onclick={ showstorylines } >
+			  <div class="mdl-card__supporting-text">
+			    <h4>Storylines</h4>
+			    Special events, cards and rules that influence outcomes in the World of Darkness.
+			  </div>
+			</div>
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp" onclick={ showquick } >
+			  <div class="mdl-card__supporting-text">
+			    <h4>Quickstart Decks</h4>
+			    Accessible and competitive decks ready for play.
+			  </div>
+			</div>
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+			  <div class="mdl-card__supporting-text">
+			    <h4>Buy V:TES Cards</h4>
+
+				<button class="deck__order-btn mdl-button mdl-js-button mdl-button--raised" onclick={ buycards }>
+					<i class="material-icons">shopping_cart</i>Order Now
+				</button>
+					   
+
+			  </div>
+			</div>	
+			
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp" if={ !app.iscordova }>
+			  <div class="mdl-card__supporting-text">
+			    <h4>Apps</h4>
+
+	    		<div class="mdl-grid mdl-grid--no-spacing">
+	    			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+						<a href="https://itunes.apple.com/us/app/amaranth-db/id1168835445"><img alt="Download on the App Store" style="height:40px;" src="./images/Download_on_the_App_Store_Badge_US-UK_135x40.svg"/></a>
+	    			</div>
+
+	    			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+						<a href="https://play.google.com/store/apps/details?id=com.zeroloop.amaranth"><img alt="Get it on Google Play" style="margin: -10px;height: 60px;" src="./images/google-play-badge.png"/></a>
+	    			</div>
+
+	    		</div>
+			   
+
+			  </div>
+			</div>	
+
+
+		</div>
+	</section>
+
+
+	<script>
+
+	newdeck(e){
+		e.preventDefault()
+		e.preventUpdate = true
+		e.stopPropagation()
+		var deck = app.newdeck()
+		riot.route('/deck/' + deck.uuid)
+	} 
+
+	showdecks(e) {
+		e.preventUpdate = true
+		e.stopPropagation()
+		riot.route('/decks')
+	}
+
+
+	showquick(e) {
+		e.preventUpdate = true
+		e.stopPropagation()
+		riot.route('/quickstart')
+	}
+
+	showlib(e) {
+		e.preventUpdate = true
+		riot.route('/library')
+	}
+
+	showcrypt(e) {
+		e.preventUpdate = true
+		riot.route('/crypt')
+	}
+
+	showstorylines(e) {
+		e.preventUpdate = true
+		riot.route('/storylines')
+	}
+
+	buycards(e){
+		e.preventDefault()
+		window.open('https://amaranth.vtes.co.nz/api/buy?expansion=VTES', '_system')
+	}
+
+	</script>
+</home>

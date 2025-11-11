@@ -1,0 +1,135 @@
+<reportissue class="mdl-c ard mdl-color--white">
+	
+	<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+		<h2 class="mdl-card__title-text">Report Issue</h2>
+	</div>
+
+		<div class="mdl-card__supporting-text">
+		<form action="#">
+
+		  <div class="mdl-textfield mdl-js-textfield">
+		    <textarea class="mdl-textfield__input" type="text" rows= "6" id="sample5" onkeyup={ changecomment }></textarea>
+		    <label class="mdl-textfield__label" for="sample5">Enter text here...</label>
+		  </div>
+
+		</form>
+	</div>
+
+	<div class="mdl-card__actions">
+		<button class="mdl-button mdl-js-button mdl-button--right mdl-button--raised mdl-button--accent" onclick={ reportissue }>Send</button>
+		<button class="mdl-button mdl-button--colored  mdl-js-button" onclick={ cancel }>Cancel</button>
+	</div>
+
+	<script>
+
+
+	this.deck    = opts.deck
+	this.card    = opts.card 
+	this.comment = ''
+
+	cancel(e) {
+		app.hidemodal(null, null, true)
+		e.preventUpdate = true 
+		setTimeout(function(){
+			this.unmount()
+		}.bind(this), 300)
+	}
+
+	changecomment(e) {
+		e.preventUpdate = true 
+		this.comment = $(e.target).val()
+		return false
+	}
+
+	reportissue(e) {
+		e.preventUpdate = true 
+
+		swal({
+			type: 'info',
+			text: 'Sending...',
+			timer: 3 * 1000,
+			showConfirmButton: false
+		}).done()
+
+
+		var ifloggedin = function(){
+			app.callapi('/api/comment/issue', {
+				deck_id:   this.deck ? this.deck.id : '',
+				deck_uuid: this.deck ? this.deck.uuid : '',
+				card_id:   this.card ? this.card.id : '',
+				comment:   this.comment 
+			}, function(response) {
+
+				swal.close()
+
+				// Registered OK
+				if(response.success) {
+
+					swal({
+						type: 'success',
+						text: 'Issue reported.',
+						timer: 3 * 1000
+					}).done()
+
+					app.hidemodal(null, null, true)
+					setTimeout(function(){
+						this.unmount()
+					}.bind(this), 300)
+					
+				}
+
+				// Error
+				else {
+					swal({
+						type: 'error',
+						text: (response.error ? response.error.message : 'Opps, there\'s been an error.'),
+						timer: 5 * 1000
+					}).done()				
+				}
+			})			
+		}.bind(this)
+
+
+		if(app.user.id) {
+			ifloggedin()
+		} 
+
+		else {
+			app.login(ifloggedin)
+		}
+
+	}
+
+	this.on('mount', function(){
+		componentHandler.upgradeDom();
+		this.sample5.focus()
+	})
+
+
+	</script>
+
+	<style>
+	.mdl-button--right{
+		float: right;
+		margin-left: 10px;
+	}
+
+	reportissue .mdl-card__supporting-text {
+		width: 100%;
+	    box-sizing: border-box;
+	    padding: 16px 16px 10px 16px;
+	}
+
+	reportissue .mdl-textfield{
+		width: 100%;
+		padding: 0;
+	}
+	reportissue .mdl-textfield__label{
+		top: 4px;
+    	bottom: -21px;
+	}
+
+
+	</style>
+
+</reportissue>

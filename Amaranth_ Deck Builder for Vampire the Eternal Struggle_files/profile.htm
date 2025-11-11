@@ -1,0 +1,162 @@
+<profile class="dialog" onclick={ close }>
+
+	<div class="dialog__content ">
+
+		<section class="section--center">
+			<div class="mdl-card__supporting-text">
+				
+				<div class="mdl-grid mdl-grid--no-spacing">
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+						<h4>Profile</h4>
+					</div>
+
+	
+				</div>
+
+
+				<div class="mdl-grid mdl-grid--no-spacing">
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+						<div class="mdl-textfield mdl-js-textfield">
+							<label class="mdl-textfield__label">First name</label>
+							<input class="mdl-textfield__input" name="firstname" type="text" value="{ user.firstname }">
+						</div>
+					</div>
+
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+						<div class="mdl-textfield mdl-js-textfield">
+							<label class="mdl-textfield__label">Last name</label>
+							<input class="mdl-textfield__input" name="lastname" type="text" value="{ user.lastname }">
+						</div>
+					</div>
+				</div>
+
+				<div class="mdl-textfield mdl-js-textfield">
+					<label class="mdl-textfield__label">Email address</label>
+					<input class="mdl-textfield__input" name="email" type="text" value="{ user.email }">
+				</div>
+
+				<div class="mdl-textfield mdl-js-textfield">
+					<label class="mdl-textfield__label">Password</label>
+					<input class="mdl-textfield__input" name="password" type="password" value="{ }">
+				</div>
+
+
+				<div class="mdl-grid">
+					<!--
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+
+						<label class="mdl-switch mdl-js-switch" for="use-old-cards">
+						  <input type="checkbox" id="use-old-cards" name="use_old_cards" class="mdl-switch__input" checked={ use_old_cards } onchange={ toggle }>
+						  <span class="mdl-switch__label">Use classic cards</span>
+						</label>
+					</div>
+					-->
+
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+
+						<label class="mdl-switch mdl-js-switch" for="show_card_images">
+						  <input type="checkbox" id="show_card_images" name="show_card_images" class="mdl-switch__input" checked={ show_card_images } onchange={ toggle }>
+						  <span class="mdl-switch__label">Show card images</span>
+						</label>						
+
+					</div>
+				</div>
+			
+
+			</div>
+		</section>
+
+		<div class="mdl-dialog__actions">
+			<button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" onclick={ save } >Save</button>
+			<button type="button" class="mdl-button mdl-js-button mdl-button--raised" onclick={ done } >Cancel</button>
+		</div>
+		
+	</div>
+
+
+	<script>
+		this.user          = opts.user || app.user 
+		
+		this.use_old_cards = 0 //parseInt(app.get_user_setting('use_old_cards')) || 0
+
+		this.show_card_images = app.get_user_setting('show_card_images')		
+
+		if(this.show_card_images === undefined) {
+			this.show_card_images = 1
+		}
+
+		this.mixin(amaranth_util.prototype)	
+	
+
+		done(e) {
+			this.unmount()
+		}
+
+		toggle(e) {
+			console.log(e.target.name, e.target.checked)
+			this[e.target.name] = (e.target.checked ? 1 : 0)
+			return true 
+		}
+
+		save(e) {
+			e.preventUpdate = true 
+
+			console.log('this', this)
+
+			var data = {
+				firstname:        this.firstname.value || '',
+				lastname:         this.lastname.value  || '',
+				email:            this.email.value     || '',
+				password:         this.password.value  || '',
+				use_old_cards:    this.use_old_cards   || 0,
+				show_card_images: this.show_card_images 
+			}
+		
+			app.callapi('/api/updateuser', data, function(response) {
+
+				app.user.firstname = data.firstname 
+				app.user.lastname  = data.lastname 
+				app.user.email     = data.email 
+				app.set_user_setting('use_old_cards', this.use_old_cards, false)
+				app.set_user_setting('show_card_images', this.show_card_images, false)
+				app.save()
+
+				// Logged in OK
+				if(response.success) {
+					swal({
+						type: 'success',
+						text: (response.error ? response.error.message : 'Profile saved.'),
+						timer: 2 * 1000
+					}).done()
+
+					this.done(e)
+
+					app.hidemodal()
+
+
+					app.trigger('loginstatus')
+				}
+
+				// Error
+				else {
+					swal({
+						type: 'error',
+						text: (response.error ? response.error.message : 'Opps, there\'s been an error.'),
+						timer: 5 * 1000
+					}).done()				
+				}
+			}.bind(this))
+		}
+
+		close(e){
+			if($(e.target).hasClass('dialog')){
+				this.done(e)
+			}
+
+			return true 
+		}
+
+	</script>
+
+</profile>
+

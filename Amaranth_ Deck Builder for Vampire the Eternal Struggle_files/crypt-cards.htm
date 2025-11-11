@@ -1,0 +1,1162 @@
+<crypt-cards class="card-filter mdl-shadow--2dp mdl-color--white">
+
+	<div class="card-header mdl-color--blue-grey-100">
+		<div class="mdl-grid mdl-grid--no-spacing">
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--1-col-phone">
+				<h5>Crypt <small if={ cards.length } style="position:absolute;"> { cards.length }</small></h5>
+			</div>
+						
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--3-col-phone">
+
+				<label name="settingsbutton" class="card-filter-settings mdl-button mdl-js-button mdl-button--icon" onclick={ toggleoptions } >
+					<i class="material-icons"  tabindex="2">&#xE5D4;</i>
+				</label>
+
+				<label class="mdl-button  mdl-button--icon mdl-js-button" style="float:right; margin-top:5px;" id="sortcrypt2_btn">
+					<i class="material-icons">&#xE8d5;</i>
+				</label>
+
+				<ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="sortcrypt2_btn">
+					<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="name">Name</li>
+					<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="oldest">Oldest</li>
+					<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="youngest">Youngest</li>
+					<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="clan">Clan</li>
+					<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="group">Group</li>
+					<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="rating" if={ app.twda }>Rating</li>
+				</ul>
+
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+					<label name="searchglass" class="mdl-button mdl-js-button mdl-button--icon" for="searchlib">
+						<i class="material-icons">&#xE8B6;</i>
+					</label>
+					<div class="mdl-textfield__expandable-holder">
+						<i class="material-icons clear_filter_button" tabindex="2" onclick={ clearq } if={ q }>cancel</i>
+						<label class="mdl-textfield__label" for="searchlib">Search...</label>
+						<input class="mdl-textfield__input" type="text" onkeyup={ search } onsearch={ search } tabindex="1" id="searchlib">
+					</div>
+				</div>
+
+
+				<!-- Multiline Tooltip -->
+				<div class="mdl-tooltip" for="searchlib">
+				You can use terms like: DOM obf
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+
+
+	<div class="card-filter-options mdl-shadow--2dp mdl-color--white" name="filteroptions" >
+
+		<div class="mdl-selectfield { showdisciplines ? 'is-focused' : ''}" name="disciplinesEl" onclick={ toggledisciplines }> 
+
+			<label class="mdl-selectfield__label" for="typeselect">Disciplines<span if={ discipline.length }>:</span> { discipline.join(' ') }</label>
+			<div class="mdl-selectfield__box" tabindex="1">
+				<i class="material-icons" tabindex="-1">arrow_drop_down</i><span class="mdl-selectfield__box-value" tabindex="0"></span>
+			</div>
+
+			<div class="mdl-selectfield__list-option-box card-filter-disciplines" onclick={ setdiscipline } onblur={ hidedisciplines } tabindex="-1">
+
+				<div class="icon-wrapper">
+
+					<icon class="abo" data-discipline="abo"></icon>
+					<icon class="ani" data-discipline="ani"></icon>
+					<icon class="aus" data-discipline="aus"></icon>
+					<icon class="cel" data-discipline="cel"></icon>
+					<icon class="chi" data-discipline="chi"></icon>
+					<icon class="dai" data-discipline="dai"></icon>
+					<icon class="dem" data-discipline="dem"></icon>
+					<icon class="dom" data-discipline="dom"></icon>
+					<icon class="for" data-discipline="for"></icon>
+					<icon class="mal" data-discipline="mal"></icon>
+					<icon class="mel" data-discipline="mel"></icon>
+					<icon class="myt" data-discipline="myt"></icon>
+					<icon class="nec" data-discipline="nec"></icon>
+					<icon class="obe" data-discipline="obe"></icon>
+					<icon class="obf" data-discipline="obf"></icon>
+					<icon class="obl" data-discipline="obl"></icon>
+					<icon class="obt" data-discipline="obt"></icon>
+					<icon class="pot" data-discipline="pot"></icon>
+					<icon class="pre" data-discipline="pre"></icon>
+					<icon class="pro" data-discipline="pro"></icon>
+					<icon class="qui" data-discipline="qui"></icon>
+					<icon class="san" data-discipline="san"></icon>
+					<icon class="ser" data-discipline="ser"></icon>
+					<icon class="spi" data-discipline="spi"></icon>
+					<icon class="str" data-discipline="str"></icon>
+					<icon class="tem" data-discipline="tem"></icon>
+					<icon class="tha" data-discipline="tha"></icon>
+					<icon class="thn" data-discipline="thn"></icon>
+					<icon class="val" data-discipline="val"></icon>
+					<icon class="vic" data-discipline="vic"></icon>
+					<icon class="vis" data-discipline="vis"></icon>
+
+
+
+				</div>
+			</div>
+		</div>
+
+
+
+		<!-- CLAN -->
+		<div class="mdl-selectfield mdl-js-selectfield">
+		  <select id="clanselect" name="clan" class="mdl-selectfield__select" onchange={ setclan }>
+		    <option value=""></option>
+		    <option value="{ clan.name }" each={ clan in app.clans }>{ clan.name }</option>
+		  </select>
+		  <label class="mdl-selectfield__label" for="clanselect">Clan</label>
+		</div>
+
+
+
+
+
+		<div class="mdl-grid mdl-grid--no-spacing">
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet mdl-cell--2-col-phone">
+
+
+				<!-- SECT -->
+				<div class="mdl-selectfield mdl-js-selectfield">
+				  <select id="sectselect" name="sect" class="mdl-selectfield__select" onchange={ setsect }>
+				    <option value=""></option>
+				    <option value="{ sect.name }" each={ sect in app.sects }>{ sect.name }</option>
+				  </select>
+				  <label class="mdl-selectfield__label" for="sectselect">Sect</label>
+				</div>
+			</div>
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet mdl-cell--2-col-phone">
+
+				<!-- TITLE -->
+				<div class="mdl-selectfield mdl-js-selectfield">
+				  <select id="titleselect" name="title" class="mdl-selectfield__select" onchange={ settitle }>
+				    <option value=""></option>
+				    <option value="{ title.name }" each={ title in app.titles }>{ title.name }</option>
+				  </select>
+				  <label class="mdl-selectfield__label" for="titleselect">Title</label>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="mdl-grid mdl-grid--no-spacing">
+			<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--2-col-phone">
+			
+				<!-- SET -->
+				<div class="mdl-selectfield mdl-js-selectfield">
+				  <select id="setselect" name="set" class="mdl-selectfield__select" onchange={ setset }>
+				    <option value=""></option>
+				    <option value="{ set.value }" each={ set in app.sets }>{ set.name }</option>
+				  </select>
+				  <label class="mdl-selectfield__label" for="setselect">Set</label>
+				</div>
+			</div>
+
+			<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--2-col-phone"  if={ 0 } >
+
+				<!-- STORYLINE -->
+				<div class="mdl-selectfield mdl-js-selectfield">
+				  <select id="storyselect" name="storyline" class="mdl-selectfield__select" onchange={ setstoryline }>
+				    <option value=""></option>
+				    <option value="{ storyline.name }" each={ storyline in app.stories }>{ storyline.name }</option>
+				  </select>
+				  <label class="mdl-selectfield__label" for="storyselect">Storyline</label>
+				</div>
+			</div>
+
+
+
+		</div>
+
+		<!-- PATH -->
+		<div class="mdl-grid mdl-grid--no-spacing" style="margin-top: 12px;">
+
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--2-col-tablet mdl-cell--1-col-phone">
+				<label style="color: rgba(0, 0, 0, 0.25);     font-size: 16px;">Path</label>
+			</div>
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--3-col-phone" style="padding-left:10px;" onclick={ setpath } >
+				
+				<div class="icon-wrapper path-selector">
+						<icon class="CAINE" title="CAINE"></icon>
+						<icon class="CATHARI" title="CATHARI"></icon>
+						<icon class="DEATH_AND_THE_SOUL" title="DEATH AND THE SOUL"></icon>
+						<icon class="POWER_AND_THE_INNER_VOICE" title="POWER AND THE INNER VOICE"></icon>				
+				</div>
+			</div>
+		</div>
+
+		<!-- GROUP -->
+		<div class="card-filter-slider">
+			<div class="mdl-grid mdl-grid--no-spacing">
+				<div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--1-col-phone">
+					<label class="card-filter-slider__label" for="groupselect">Group <span name="grouplabel" class="card-filter-slider__group"></span></label>
+				</div>
+
+				<div class="mdl-cell mdl-cell--8-col mdl-cell--5-col-tablet mdl-cell--3-col-phone">
+					<input class="mdl-slider mdl-js-slider" type="range" id="groupselect" min="0" max="7" value="0" step="0.5" oninput={ updategroup } ondblclick={ setextragroup } onchange={ setgroup }>
+				</div>								
+			</div>
+		</div>
+
+		<div class="card-filter-slider">
+			<div class="mdl-grid mdl-grid--no-spacing">
+				<div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--1-col-phone">
+					<label class="card-filter-slider__label" for="groupselect">Min Cap <span name="mincaplabel" class="card-filter-slider__group"></span></label>
+				</div>
+
+				<div class="mdl-cell mdl-cell--8-col mdl-cell--5-col-tablet mdl-cell--3-col-phone">
+					<input class="mdl-slider mdl-js-slider" type="range" id="groupselect" min="0" max="11" value="0" step="1" oninput={ updatemincap } onchange={ setmincap }>
+				</div>								
+			</div>
+		</div>
+
+
+		<div class="card-filter-slider">
+			<div class="mdl-grid mdl-grid--no-spacing">
+				<div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--1-col-phone">
+					<label class="card-filter-slider__label" for="groupselect">Max Cap <span name="maxcaplabel" class="card-filter-slider__group"></span></label>
+				</div>
+
+				<div class="mdl-cell mdl-cell--8-col mdl-cell--5-col-tablet mdl-cell--3-col-phone">
+					<input class="mdl-slider mdl-js-slider" type="range" id="groupselect" min="0" max="11" value="0" step="1" oninput={ updatemaxcap } onchange={ setmaxcap }>
+				</div>								
+			</div>
+		</div>
+
+		<div class="mdl-grid mdl-grid--no-spacing mdl-color-text--grey-400" style="border-top: 1px solid #EEE;padding-top: 10px;">
+
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Bleed">
+			  <input type="checkbox" id="Bleed" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">+Bleed</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Titled">
+				  <input type="checkbox" id="Titled" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Titled</span>
+				</label>					
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Strength">
+			  <input type="checkbox" id="Strength" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">+Strength</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Blackhand">
+				  <input type="checkbox" id="Blackhand" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Black Hand</span>
+				</label>
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Stealth">
+			  <input type="checkbox" id="Stealth" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">+Stealth</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Anarch">
+				  <input type="checkbox" id="Anarch" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Anarch</span>
+				</label>
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Intercept">
+			  <input type="checkbox" id="Intercept" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">+Intercept</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Red_list">
+				  <input type="checkbox" id="Red_list" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Red list</span>
+				</label>		
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Aggravated">
+			  <input type="checkbox" id="Aggravated" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">Aggravated</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Infernal">
+				  <input type="checkbox" id="Infernal" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Infernal</span>
+				</label>							
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Enter_combat">
+			  <input type="checkbox" id="Enter_combat" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">Enter&nbsp;combat</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Slave">
+				  <input type="checkbox" id="Slave" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Slave</span>
+				</label>				
+
+			<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="Flight">
+			  <input type="checkbox" id="Flight" class="mdl-checkbox__input" onchange={ setfilter }>
+			  <span class="mdl-checkbox__label">Flight</span>
+			</label>
+
+				<label class="mdl-checkbox mdl-js-checkbox mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone" for="PT" if={ app.user && app.user.pt }>
+				  <input type="checkbox" id="PT" class="mdl-checkbox__input" onchange={ setfilter }>
+				  <span class="mdl-checkbox__label">Playtest</span>
+				</label>
+
+		</div>
+
+
+		<div class="mdl-grid _mdl-grid--no-spacing card-filter-buttons ">
+			<div class="mdl-cell mdl-cell--6-col  mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+				<button class="mdl-button mdl-js-button mdl-button--raised" onclick={ clear }  style="width:100%; ">
+					Clear
+				</button>
+			</div>
+						
+			<div class="mdl-cell mdl-cell--6-col  mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"  onclick={ done } style="width:100%; ">
+					Done
+				</button>
+			</div>
+			
+		</div>
+
+
+	</div>
+
+	<div class="card-content" onmousedown={ hideoptions } onscroll={ onscroll }>
+		<div class="mdl-grid mdl-grid--no-spacing">
+
+			<div class="mdl-cell mdl-cell--12-col"  if={ cards.length }>
+				<div class="picker-list mdl-list">
+					<div class="mdl-list__item { type }" each={ showcards || cards } >
+						<span class="mdl-list__item-primary-content" onclick={ showcard }>
+							<div>{ name }  <span class="clan-name"> { clan }:{ group }</span> <span class="banned" if={ path != '' }>Not Legal</span> <br/>
+								<small class="crypt-details">
+									<span class="capacity">{ capacity }</span> <raw html={ icons }></raw> <icon class={ path && path.split(' ').join('_') } if={ path } title={ path } style="font-size: 24px;margin-bottom: -8px;margin-top: -8px; margin-left:-4px"></icon>
+								</small>
+							</div>							
+						</span>
+
+						<span class="mdl-list__item-secondary-content crypt-details" if={ 0 }>
+							<span> { clan } <span class="group">{ group }</span> <span class="capacity">{ capacity }</span> <br/> { disc }</span>
+						</span>
+
+						<span class="mdl-list__item-secondary-content">
+							<span if={ rating } style="white-space: nowrap;">{ rating } / 100</span>
+						</span>
+
+
+						<button if={ deck && !deck.readonly } class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ removecard }>
+							<i class="material-icons">&#xE15C;</i>
+						</button>
+
+						<span if={ deck } class="picker-total total_in_deck mdl-list__item-secondary-action">{ parent.deck.cards[ id ] || 0 }</span>
+							
+						<button if={ deck && !deck.readonly } class="mdl-button mdl-js-button mdl-button--icon mdl-list__item-secondary-action" onclick={ addcard }>
+							<i class="material-icons">&#xE147;</i>
+						</button> 
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script>
+	this.chunksize = 100
+
+	// Grab all library cards
+	if(opts.deck && false) {
+		this.cards = []
+	} 
+	else {
+		this.cards = app.cryptcards(
+			function(card){
+				return card.pt != 1 && !card.storyline
+			}
+		)
+	}
+
+	if(this.cards.length > this.chunksize) {
+		this.showcards = this.cards.slice(0, this.chunksize)
+	} else {
+		this.showcards = null 
+	}	
+
+	this.lastq = ''
+
+	this.mnt = opts.mnt
+
+	this.deck = opts.deck // || app.deck || app.newdeck()
+
+	this.cryptorder = ''
+
+	this.discipline = []
+	this.path = []
+
+	this.extragroup = false
+
+	showcard(e) {
+		e.preventUpdate = true
+		var card = e.item 
+		var dom = document.createElement('card')
+		app.setmodal(dom, function(modal){
+			modal.css('overflow-y', 'auto').addClass('card').addClass('large')
+		})
+		riot.mount(dom, 'card', {card: card, cards: this.cards, deck: this.deck, mnt: this })
+	}
+	
+	addcard(e) {
+		e.preventUpdate = true
+		var card = e.item 
+		var qty = (this.deck.cards[card.id] + 1 || 1)
+		$(e.target).parents('div:first').find('.total_in_deck').html(qty)
+		this.deck.dirty = 1
+		this.deck.cards[card.id] = qty
+		app.trigger('deckchange')
+
+		app.save()
+	}
+
+	removecard(e) {
+		e.preventUpdate = true
+		var card = e.item 
+		var qty = Math.max((this.deck.cards[card.id] - 1 || 0),0)
+		$(e.target).parents('div:first').find('.total_in_deck').html(qty)
+		this.deck.dirty = 1
+		this.deck.cards[card.id] = qty
+		app.trigger('deckchange')
+		app.save()
+	}
+
+	done(e) {
+		if($(document).width() >= 1024 && $(this.root).parents('.modal').length) {
+			app.hidemodal()
+		} else {
+			this.toggleoptions(e)
+		}
+	}
+
+	toggleoptions(e) {
+		e.preventUpdate = true
+		$(this.filteroptions).toggleClass('is-active')
+		this.overtest = false
+		return true 
+		
+	}
+
+	showoptions(e) {
+		e.preventUpdate = true
+		clearInterval(this.hideOptsInt)
+		$(this.filteroptions).addClass('is-active')
+
+		this.hidedisciplines()
+	}
+
+	hideoptions(e) {
+		e.preventUpdate = true
+		$(this.filteroptions).removeClass('is-active')
+	}
+
+	toggledisciplines(e) {
+
+		e.stopPropagation()
+
+		if(!this.showdisciplines) {
+			this.showdisciplines = true  
+			$(this.disciplinesEl).addClass('is-focused').find('i').html('arrow_drop_up')	
+			$(this.disciplinesEl).find('.card-filter-disciplines').focus()		
+			this.hideselects(e)
+		}
+
+		console.log('this.showdisciplines',this.showdisciplines)
+		e.preventUpdate = true
+	
+	}
+
+	hidedisciplines(e){
+		e.preventUpdate = true
+		setTimeout(function(){this.showdisciplines = false}.bind(this),100)
+		$(this.disciplinesEl).removeClass('is-focused').find('i').html('arrow_drop_down')	
+	}
+
+	hideselects(e){
+		e.preventUpdate = true
+		$(this.root).find('.mdl-js-selectfield').removeClass('is-focused')
+	}
+
+	onscroll(e) {
+
+		this.hideoptions(e)
+
+		e.preventUpdate   = true
+		var chunkevery    = this.chunksize 
+		var elementheight = 45
+		var chunk         = Math.floor(e.target.scrollTop / (chunkevery * elementheight)) 
+
+		if(chunk > (this.lastchunk || 0)) {
+			this.showcards  = this.cards.slice(0, chunkevery * (chunk + 1))
+			this.lastchunk  = chunk
+			e.preventUpdate = false
+		}
+	}
+
+	sortcryptby(e){
+		e.preventUpdate = true 
+		e.preventDefault()
+		var order = $(e.target).data('sort')
+		this.cryptorder = order
+
+		console.log('sortcryptby', order)
+
+		if(this.cryptorder) {
+			app.sortcrypt(this.cards, this.cryptorder)
+			this.showcards = this.cards.slice(0, ((this.lastchunk || 0) + 1) * this.chunksize)
+
+		}
+
+		this.hideoptions(e)
+
+		this.update()
+	}
+
+
+	delayhideoptions(e) {
+		e.preventUpdate = true
+
+
+
+		if(!this.overtest) {
+
+			this.hideOptsInt = setTimeout(function(){
+									$(this.filteroptions).removeClass('is-active')
+								}.bind(this), 50)
+		}
+
+	}
+
+
+	setclan(e) {
+		e.preventUpdate = true
+		this.clan = $(e.target).val()		
+		this.filter()		
+	}	
+
+	setsect(e) {
+		e.preventUpdate = true
+		this.sect = $(e.target).val()
+		this.filter()		
+	}	
+
+	settitle(e) {
+		e.preventUpdate = true
+		this.title = $(e.target).val()
+		this.filter()		
+	}
+
+	setstoryline(e) {
+		e.preventUpdate = true
+		this.storyline = $(e.target).val()
+		this.filter()
+	}
+
+	setset(e) {
+		e.preventUpdate = true
+
+		this.set = $(e.target).val()
+
+		console.log('this.set', this.set)
+
+		this.filter()
+	}
+
+	setdiscipline(e) {
+		e.preventUpdate = true
+		e.preventDefault()
+		e.stopPropagation()
+
+
+		if(e.target.nodeName == 'ICON') {
+			var n = $(e.target)
+			var d = n.data('discipline')
+			var disciplines = this.discipline
+
+			switch(true) {
+				case n.hasClass('sup'):
+					this.remove_discipline(d.toUpperCase())
+					n.removeClass('sup').attr('class', d)
+					break
+
+				case n.hasClass('inf'):
+					this.remove_discipline(d)
+					this.add_discipline(d.toUpperCase())
+					n.removeClass('inf').attr('class', d.toUpperCase()).addClass('sup')
+					break
+
+				default: 
+					this.add_discipline(d)
+					n.addClass('inf')
+			}
+		}
+		this.filter()
+	}
+
+	remove_discipline(d) {
+		var i = this.discipline.indexOf(d);
+		if (i >= 0) {
+		  this.discipline.splice(i, 1 );
+		}		
+	}
+
+	add_discipline(d) {
+		var i = this.discipline.indexOf(d);
+		if (i == -1) {
+		  this.discipline.push(d);
+		}	
+	}
+
+
+	setpath(e) {
+		e.preventUpdate = true
+		e.preventDefault()
+		e.stopPropagation()
+
+
+		if(e.target.nodeName == 'ICON') {
+			var n = $(e.target)
+			var d = n.attr('title')
+			var paths = this.path
+
+			switch(true) {
+				case n.hasClass('active'):
+					this.remove_path(d.toUpperCase())
+					n.removeClass('active')
+					break
+
+				default: 
+					this.add_path(d)
+					n.addClass('active')
+			}
+		}
+		this.filter()
+	}
+
+	remove_path(d) {
+		var i = this.path.indexOf(d);
+		if (i >= 0) {
+		  this.path.splice(i, 1 );
+		}	
+	}
+
+	add_path(d) {
+		var i = this.path.indexOf(d);
+		if (i == -1) {
+		  this.path.push(d);
+		}	
+	}
+
+
+	setfilter(e) {
+		e.preventUpdate = true
+		var id =  e.target.getAttribute('id').toLowerCase().replace('_', '')
+		var checked = e.target.checked
+		this[id] = (checked ? 1 : 0)
+
+		console.log(id, this[id] )
+		this.filter()	
+	}	
+
+
+
+	updategroup(e, extragroup){
+		e.preventUpdate = true
+		var group = parseFloat(e.target.value)
+		var text = ''
+
+		this.extragroup = extragroup || false 
+		var extra = this.extragroup
+
+		switch(group) {
+			case 0:
+				text = ''
+				group = null
+				break;
+			case 0.5:
+				text = 'Any'
+				group = 'ANY' 
+				break;
+			case 1:
+				text = (extra ? '1-2' : '1')
+				break;
+			case 1.5:
+				text = '1-2'
+				break;
+			case 2:
+				text = (extra ? '1-3' : '2')
+				break;
+			case 2.5:
+				text = '2-3'
+				break;
+			case 3:
+				text = (extra ? '2-4' : '3')
+				break;
+			case 3.5:
+				text = '3-4'
+				break;
+			case 4:
+				text = (extra ? '3-5' : '4')
+				break;
+			case 4.5:
+				text = '4-5'
+				break;
+			case 5:
+				text = (extra ? '4-6' : '5')
+				break;
+			case 5.5:
+				text = '5-6'
+				break;
+			case 6:
+				text = (extra ? '5-6' : '6')
+				break;
+			case 6.5:
+				text = '6-7'
+				break;
+			case 7:
+				text = (extra ? '6-7' : '7')
+				break;				
+		} 
+
+		this.group = group
+		$(this.grouplabel).html(text)
+
+	}
+
+	setextragroup(e) {
+		//this.extragroup = !this.extragroup
+		this.updategroup(e, !this.extragroup) 
+		e.preventUpdate = true
+
+		console.log('filter!')
+		this.filter()		
+	}
+
+	setgroup(e) {
+		e.preventUpdate = true
+		this.filter()		
+	}
+
+	updatemincap(e){
+		e.preventUpdate = true
+		this.mincap = parseInt(e.target.value)
+		$(this.mincaplabel).html(this.mincap || '')
+	}
+
+	setmincap(e) {
+		e.preventUpdate = true
+		this.filter()		
+	}
+
+	updatemaxcap(e){
+		e.preventUpdate = true
+		this.maxcap = parseInt(e.target.value)
+		$(this.maxcaplabel).html(this.maxcap || '')
+	}
+
+	setmaxcap(e) {
+		e.preventUpdate = true
+		this.filter()		
+	}
+
+	search(e){
+		e.preventUpdate = true 
+		this.q = e.target.value.trim() 
+		this.filter()
+	}
+
+	clearq(e){
+		this.searchlib.value = ''
+		e.preventUpdate = true 
+		this.q = ''
+		this.filter()
+		store.set('deck.search', this.q)
+	}
+
+
+	clear(e) {
+		e.preventUpdate = true 
+		this.discipline = []
+
+		delete this['q']
+		delete this['clan']
+		delete this['sect']
+		delete this['title']
+		delete this['storyline']
+		delete this['set']
+		delete this['group']
+		delete this['mincap']
+		delete this['maxcap']
+		delete this['bleed']
+		delete this['strength']
+		delete this['stealth']
+		delete this['intercept']
+		delete this['blackhand']
+		delete this['anarch']
+		delete this['aggravated']
+		delete this['entercomba']
+		delete this['infernal']
+		delete this['slave']
+		delete this['flight']
+		delete this['redlist']
+		delete this['titled']
+		delete this['pt']
+
+		this.lastchunk = 0
+		this.showdisciplines = false
+		//this.toggleoptions(e)
+		//this.filter()	  
+		//	
+
+		$(this.root).find('#searchlib').val('').trigger('blur')
+		$(this.filteroptions).find('.inf').removeClass('inf')
+		$(this.filteroptions).find('.sup').removeClass('sup').each(function(i, el){
+			$(el).attr('class', $(el).data('discipline'))
+		})
+
+		$(this.filteroptions).find('.mdl-js-selectfield.is-dirty').each(function(i, el){
+			$(el).removeClass('is-dirty')
+			$(el).find('.mdl-selectfield__box-value').html('')
+		})
+		$(this.filteroptions).find('input[type=checkbox]:checked').click()
+		$(this.filteroptions).find('input[type=range]').val(0).trigger('click')
+
+		this.filter() 		
+
+	}
+
+	filter() {
+
+		var hash = []
+		var pure = []
+		var keys = [
+			'q', 
+			'discipline', 
+			'path', 
+			'clan', 
+			'title', 
+			'storyline', 
+			'set', 
+			'sect', 
+			'group', 
+			'mincap', 
+			'maxcap', 
+			'bleed', 
+			'strength', 
+			'stealth', 
+			'intercept', 
+			'blackhand', 
+			'anarch', 
+			'aggravated', 
+			'entercombat', 
+			'extragroup',
+			'redlist', 
+			'infernal', 
+			'slave', 
+			'flight', 
+			'titled', 
+			'pt'
+		]
+
+		keys.forEach(function(key){
+			hash.push(String(this[key]))
+			pure.push(null)
+		}.bind(this))
+
+		hash = hash.join('.')
+		pure = pure.join('.')
+
+
+		var q           = this.q           || ''
+		var discipline  = this.discipline  || []
+		var path        = this.path  || []
+		var clan        = this.clan        || null 
+		var sect        = this.sect        || null 
+		var title       = this.title       || null 
+		var storyline   = this.storyline   || null 
+		var set         = parseInt(this.set)   	   || null 
+		var group       = this.group       || null 
+		var mincap      = this.mincap      || null 
+		var maxcap      = this.maxcap      || null 
+		var bleed       = this.bleed       || null
+		var strength    = this.strength    || null
+		var stealth     = this.stealth     || null
+		var intercept   = this.intercept   || null
+		var blackhand   = this.blackhand    || null
+		var anarch      = this.anarch      || null
+		var aggravated  = this.aggravated  || null
+		var entercombat = this.entercombat || null
+		var infernal    = this.infernal    || null
+		var slave       = this.slave       || null
+		var flight      = this.flight       || null
+		var redlist     = this.redlist     || null
+		var titled      = this.titled      || null
+		var pt          = this.pt          || null
+		var extragroup  = this.extragroup
+	
+	//	console.log('hash', hash)
+
+		if(this.lasthash == hash){
+			return 
+		}
+		
+		clearInterval(this.filterInt)
+		this.filterInt = setTimeout(function(){ 
+		//	var s = window.performance.now()
+
+			this.lasthash = hash
+
+			if(hash != pure) {
+				var qt =[]
+				if(q.length >= 1) {
+					var i = 0
+					qt = q.match(/\w+/g)
+					if(qt) qt.forEach(function(word){
+						// Ensures searching for disciplines works, while not breaking 3 letter searches
+						if(word !== word.toUpperCase()){
+							qt[i] = word.toLowerCase() 
+						}
+						i++
+					})
+				}
+
+				
+				this.cards = app.cryptcards(function(card){
+					var match = true 
+
+					if(qt.length) {
+						var keywords = (card.name + ' ' + card.clan + ' ' + (card.keywords || '') + ' ' + card.disc + ' ' + card.title + ' ' + card.type).toLowerCase() + ' ' + card.disc
+
+						if(card.storyline && card.storyline.toLowerCase() == q.toLowerCase()){
+							return 1
+						}
+
+						match = (
+							~keywords.indexOf(qt[0] || '') &&
+							~keywords.indexOf(qt[1] || '') &&
+							~keywords.indexOf(qt[2] || '') &&
+							~keywords.indexOf(qt[3] || '') &&
+							~keywords.indexOf(qt[4] || '')
+						)
+
+					}
+					
+					// Hide story line and play test cards by default
+					if(match && storyline) {
+						match = card.storyline == storyline
+					} else if (card.storyline) {
+						return false 
+					}  		
+					
+					if(match && pt !== null) {
+						match = card.pt == 1
+					} else if (card.pt == 1) {
+						return false 
+					} 					
+
+					
+					if(match && group !== null) {
+						if(group == 'ANY') {
+							match = card.group == group
+						}
+
+						else {					
+							
+							if(extragroup) {
+								var grp = parseFloat(card.group)
+								match =  grp >= Math.floor(group -1) && grp <= Math.floor(group + 1)
+							} else {							
+								var grp = parseFloat(card.group)
+								match =  grp == Math.floor(group) || grp == Math.ceil(group)
+							}
+
+						}
+
+					}
+
+					if(match && discipline.length) {
+
+						for(var c = 0; c < discipline.length; c++){
+							var d = discipline[c]
+							if(d && match) {
+								// Inferior selected, so also include sup
+								if(d[0].toUpperCase() != d[0]) {
+									match = ~card.disc.toLowerCase().indexOf(d.toLowerCase())
+
+								// Superior select, so only includ sup
+								} else {
+									match = ~card.disc.indexOf(d)
+								}
+							}
+						}
+					}							
+
+					if(match && path.length) {
+						var m = false	
+						
+						for(var c = 0; c < path.length; c++){
+							var d = path[c]
+							if(d && match) {
+								if(~String(card.path).indexOf(d)){
+									m = true
+								}
+							}
+
+						}
+						match = m
+					}			
+
+					if(match && sect) {
+						match = card.sect == sect
+					}			
+
+					if(match && clan) {
+						if(clan != 'Imbued'){
+							match = card.clan == clan
+						} else {
+							match = card.type == clan
+						}
+					}			
+
+					if(match && title) {
+						if(title == 'No Title') {
+							match = !card.title 
+						}
+						else {
+							match = card.title == title
+						}
+					}
+
+					if(match && set) {
+						match = ~card.sets.indexOf(set) 
+					}
+
+					if(match && mincap !== null) {
+						match = parseFloat(card.capacity) >= mincap
+					}
+
+					if(match && maxcap !== null) {
+						match = parseFloat(card.capacity) <= maxcap
+					}
+
+					if(match && bleed !== null) {
+						match = card.bleed > 0
+					}      
+
+					if(match && strength !== null) {
+						match = card.strength > 0
+					}   
+
+					if(match && stealth !== null) {
+						match = card.stealth > 0
+					}    
+
+					if(match && intercept !== null) {
+						match = card.intercept > 0
+					}  
+
+					if(match && blackhand !== null) {
+						match = card.blackhand > 0
+					}   
+
+					if(match && anarch !== null) {
+						match = card.anarch > 0
+					}     
+
+					if(match && aggravated !== null) {
+						match = card.aggravated > 0
+					} 
+
+					if(match && entercombat !== null) {
+						match = card.entercombat > 0
+					}
+
+					if(match && redlist !== null) {
+						match = card.redlist > 0
+					} 
+					
+					if(match && infernal !== null) {
+						match = card.infernal > 0
+					}    					
+
+					if(match && slave !== null) {
+						match = card.slave > 0
+					}  
+
+					if(match && flight !== null) {
+						match = ~card.keywords.indexOf('flight')
+					}   
+
+					if(match && titled !== null) {
+						match = card.titled > 0
+					}     
+
+					return match 
+
+				
+				})
+			}
+
+			else {
+				this.cards = app.cryptcards()
+			}
+
+
+			if(this.cryptorder) {
+				app.sortcrypt(this.cards, this.cryptorder)
+			}
+
+			if(this.cards.length > this.chunksize) {
+				this.showcards = this.cards.slice(0, this.chunksize)
+				this.lastchunk = 0
+			} else {
+				this.showcards = null 
+				this.lastchunk = 0
+			}
+
+			this.update()
+
+//			console.log('ms.time', (window.performance.now() - s) * 0.001 )
+		}.bind(this), 400)
+
+	}
+
+	this.on('update', function(){
+
+	//	console.log('this.cards.length', this.cards.length)
+	//	console.log('this.showcards.length', this.showcards.length)
+
+      var x = new Date().getTime();
+      setTimeout( function() {
+		  console.log('crypt.update' , ( new Date().getTime() - x ) + 'ms');
+    	  componentHandler.upgradeDom();
+	  },1);		
+
+	})
+
+	this.on('unmount', function(){
+		app.crypt = null 
+	})
+
+	this.on('mount', function(){
+	//	this.librarycards = window.cards.filter(function(card){ return card.type != 'Vampire' && card.type != 'Imbued' })
+
+		componentHandler.upgradeDom();
+	
+		if(this.deck && !app.iscordova) {
+			setTimeout(function(){
+				this.searchglass.click()
+			}.bind(this), 20)
+		}
+	})
+	</script>
+
+</crypt-cards>

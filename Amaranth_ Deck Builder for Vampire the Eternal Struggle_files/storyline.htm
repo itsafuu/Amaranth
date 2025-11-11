@@ -1,0 +1,305 @@
+<storyline class="mdl-grid">
+	<div class="mdl-cell mdl-cell--12-col" style="min-height:0;">
+		<h1 class="mdl-card__title-text">{ storyline.title } </h1>
+	</div>
+
+	<div class="mdl-cell mdl-cell--12-col" name="readmore1">
+		<h6  class="storyline_title">Description</h6>
+		<div  if={ storyline.desc } class="description"><raw html={ storyline.desc } class={ highlight: ~storyline.desc.indexOf('http://www.vekn.net') }></raw></div>
+		<button class="more-button mdl-button mdl-color-text--primary" onclick={ showmore }>
+			<span class="more-button__span">
+				<i class="material-icons">&#xE5CF;</i> Read more
+			</span>
+		</button>
+	</div>
+
+	<div class="mdl-cell mdl-cell--12-col" name="readmore2">
+		<h6 class="storyline_title">Rules</h6>
+		<div if={ storyline.rules } class="rules"><raw html={ storyline.rules }  class={ highlight: ~storyline.desc.indexOf('http://www.vekn.net') }></raw></div>
+		<button class="more-button mdl-button mdl-color-text--primary" onclick={ showmore }>
+			<span class="more-button__span">
+				<i class="material-icons">&#xE5CF;</i> Read more
+			</span>
+		</button>
+	</div>
+
+	<!-- PUT CARDS IN HERE -->
+
+	<div class="deck-crypt mdl-cell mdl-cell--5-col  mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+		<div class="deck-header">
+
+			<h4>Crypt <span if={ crypt.total }>({ crypt.total })</span></h4>
+
+			<ul class="mdl-menu mdl-js-menu" for="sortcrypt_btn">
+				<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="name">Name</li>
+				<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="capacity">Capacity</li>
+				<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="clan">Clan</li>
+				<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="group">Group</li>
+				<li class="mdl-menu__item" onclick={ sortcryptby } data-sort="quantity">Quantity</li>
+			</ul>
+
+		</div>
+
+		
+		<div class="picker-list mdl-list">
+			<div class="mdl-list__item" each={ crypt } data-id="{ id }">
+
+				<span class="mdl-list__item-primary-content" onclick={ showcryptcard }>
+					<div>{ name } <span class="clan-name"> { clan }:{ group }</span><br/>
+						<small class="crypt-details">
+							<span class="capacity">{ capacity }</span> <rawupdate html={ icons }></rawupdate>   
+						</small>
+					</div>
+				</span>
+
+			</div>
+		</div>
+		
+	</div>
+
+
+	<div class="deck-library mdl-cell mdl-cell--4-col  mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-color--white mdl-shadow--2dp">
+		<div class="deck-header">
+			<h4>Library</h4>
+		</div>
+
+		<div class="picker-list mdl-list" each={ type in cardtypes }>
+			<div class="picker-type" if={ name != 'total' }>{ library[type].total } { type }</div>
+
+			<div class="mdl-list__item"	no-reorder each={ library[type] }>
+				<span class="mdl-list__item-primary-content" onclick={ showlibcard }>
+					<span>{ name } <span class="banned" if={ banned }>Banned</span></span>
+				</span>
+
+				<span if={ deck } class="picker-total total_in_deck mdl-list__item-secondary-action">{ parent.deck.cards[ id ] || 0 }</span>
+
+			</div>
+		</div>	
+
+	</div>
+
+
+	<div class="deck-buttons mdl-cell mdl-cell--3-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+
+		<div class="mdl-color--white mdl-shadow--2dp" if={ !storyline.cards }>
+		  
+		  <div class="mdl-card__supporting-text">
+			To use these cards select <strong>{ storyline.title }</strong> from the storyline filter when adding cards to your deck.
+
+		  </div>
+		  
+		  
+		</div>
+
+		<div class="mdl-color--white mdl-shadow--2dp" if={ storyline.cards }>
+		  
+		  <div class="mdl-card__supporting-text">
+			To use these cards print the deck and follow the story lines rules.
+		  </div>
+
+		</div>
+		<br/>
+
+		<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"  onclick={ newdeck } if={ !storyline.cards }>
+			<i class="material-icons">&#xE145;</i> Create Deck
+		</button>
+		
+		<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"  onclick={ printdeck }>
+			<i class="material-icons">&#xE8AD;</i> Print
+		</button>
+
+		<button class="mdl-button mdl-js-button mdl-button--raised"  onclick={ share }>
+			<i class="material-icons">&#xE80D;</i> Share
+		</button>	
+	</div>	
+		
+	<script>
+
+	this.readonly  = true
+	this.deck      = opts.deck 
+	this.storyline = opts.storyline
+	this.cards     = opts.storyline.cards 
+
+
+	showmore(e) {
+		var t = $(e.target).parents('.mdl-cell:first').addClass('readmore--expanded')
+	}
+
+	showcryptcard(e) {
+		e.preventUpdate = true
+		this.update()
+		var card = e.item 
+		var dom = document.createElement('card')
+		setTimeout(function(){
+			app.setmodal(dom, function(modal){
+				modal.css('overflow-y', 'auto').css('background', 'black').addClass('card')
+			})
+			riot.mount(dom, 'card', {card: card, cards: this.crypt, deck: this.deck })
+			componentHandler.upgradeDom();						
+		}.bind(this),1)
+	}
+
+	showlibcard(e) {
+		e.preventUpdate = true
+		this.update()
+		var card = e.item 
+		var dom = document.createElement('card')
+		setTimeout(function(){
+			app.setmodal(dom, function(modal){
+				modal.css('overflow-y', 'auto').css('background', 'black').addClass('card')
+			})
+			riot.mount(dom, 'card', {card: card, cards: this.librarycards, deck: this.deck })
+			componentHandler.upgradeDom();			
+		}.bind(this),1)
+	}
+
+	printdeck(e) {
+		e.preventUpdate = true
+		var deck = {}
+		deck.cards = {}
+
+
+		var counts = this.storyline.cards || {}
+
+		this.crypt.forEach(function(card){
+			deck.cards[card.id] = counts[card.name] || 1
+		})
+
+		this.librarycards.forEach(function(card){
+			deck.cards[card.id] = counts[card.name] || 1
+		})
+
+		deck.title = this.storyline.title
+		this.deck = deck
+
+		var ifloggedin = function(){
+			// Show please wait dialogue
+			swal({type:'info', text: 'Generating PDF...', showConfirmButton: false, allowOutsideClick: false, timer: 25 * 1000 }).done()
+
+			app.callapi('/api/print', {
+				deck: JSON.stringify(this.deck),
+				format: (parseInt(app.get_user_setting('use_old_cards'))  ? 'old' : 'new') 
+			}, function(response){
+
+				if(response.success) {
+					swal({type:'success', text: 'Downloading PDF.', showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
+					var download =  response.result 
+					app.downloadpdf(download, this.deck.title)
+				}
+				else {
+					var error = 'There\'s been an error — please try again.'
+
+					if(response.error && response.error.code == -1) {
+						var error = response.error.message
+					}
+					swal({type:'error', text: error, showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
+				}
+			}.bind(this))
+		}.bind(this)
+
+
+		if(app.user.id) {
+			ifloggedin()
+		} 
+
+		else {
+			app.login(ifloggedin)
+		}
+	}
+
+	newdeck(e){
+		e.preventUpdate = true
+		var deck = app.newdeck()
+		riot.route('/deck/' + deck.uuid)
+	} 
+
+
+	share(e) {
+		e.preventUpdate = true
+		app.append('share', {
+			title:   'Share this storyline',
+			subject: 'Check out this VTES Storyline',
+			url:     window.location.href
+		})
+	}
+
+	this.on('mount', function(){
+
+
+		var storyline = this.storyline
+
+		// Highlight links (restricted)
+		$(this.root).find('.highlight').each(function(i, el) {
+			el = $(el)
+			el.html(app.highlight(el.text()))
+		})
+
+		setTimeout(function(){
+			if(this.readmore1.scrollHeight > 120) {
+				$(this.readmore1).addClass('readmore')
+			}
+		}.bind(this), 10)
+
+
+		setTimeout(function(){
+			if(this.readmore2.scrollHeight > 120) {
+				$(this.readmore2).addClass('readmore')
+			}
+		}.bind(this), 20)
+
+		var crypt   = []
+		var library = {}
+
+		app.cryptcards().forEach(function(card){
+			if(card.storyline == storyline.title){
+				crypt.push(card)
+			}
+		})
+
+		app.librarycards().forEach(function(card){
+			if(card.storyline == storyline.title){
+				librarytype = library[card.type]
+
+				if(!librarytype){
+					library[card.type] = []
+					librarytype = library[card.type]
+					librarytype.total = 0
+				}
+
+				library.total += 1
+				librarytype.total += 1
+
+				librarytype.push(card)
+			}
+		})
+
+		var cardtypes = []
+
+		for(type in library) {
+			if(type != 'total' && type != 'pool' && type != 'blood') 
+				cardtypes.push(type)
+		}
+
+		this.cardtypes = cardtypes 
+
+		var librarycards = []
+
+		cardtypes.forEach(function(cardtype){				
+			library[cardtype].forEach(function(card){
+				librarycards.push(
+					card
+				)
+			})
+		})
+
+		this.crypt        = crypt
+		this.library      = library
+		this.librarycards = librarycards
+
+		this.update()
+
+	})
+
+	</script>
+
+</storyline>

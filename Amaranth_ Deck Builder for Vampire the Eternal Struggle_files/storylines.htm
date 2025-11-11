@@ -1,0 +1,33 @@
+<storylines>
+
+	<section class="section--center">
+		<div class="mdl-card__supporting-text">
+			<h4>Storylines</h4>
+			<p>Special events, cards and rules that influence outcomes in the World of Darkness.</p>
+		</div>
+		<div class="mdl-grid">
+
+			<div class="mdl-color--white  mdl-cell mdl-cell--6-col mdl-shadow--2dp" each={ storyline in storylines }  onclick={ showstoryline }>
+			  <div class="mdl-card__supporting-text">
+			    <h4>{ storyline.title } </h4>
+			  	{ storyline.intro }  
+			  </div>
+			</div>
+		
+		</div>
+	</section>
+
+
+	<script>
+
+	this.storylines = opts.storylines
+
+	showstoryline(e){
+		e.preventUpdate = true
+		riot.route('/storyline/' + e.item.storyline.key)
+	} 
+
+
+	</script>
+
+</storylines>

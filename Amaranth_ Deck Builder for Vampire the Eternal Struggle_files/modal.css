@@ -1,0 +1,151 @@
+body.modal-stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+
+body.modal-stop-scrolling #layout{
+  -webkit-filter: blur(1px);
+}
+
+.modal-overlay {
+  background-color: black;
+  display: block;
+  /* IE8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  /* IE8 */
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  _display: none;
+  z-index: 9998; 
+}
+
+
+.modal {
+  background-color: white;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 600px;
+  padding: 0;
+  _border-radius: 5px;
+  _text-align: center;
+  position: fixed;
+  left: 50%;
+  top: 7%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  display: none;
+  z-index: 9999;
+  box-shadow:-1px 8px 50px rgba(0,0,0,0.4);
+  overflow-x: visible;
+  overflow-y: visible; /*auto !important;*/
+  -webkit-overflow-scrolling: touch;
+  max-height: 90%;
+  padding-bottom: 0;
+  margin-left: -300px;
+}
+  @media (min-width: 768px) {
+    .modal {
+      width: 740px;     
+      margin-left: -370px;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .modal {
+
+       left: calc(120px + 50%);
+    }
+
+    .modal.find-cards{
+        _left: calc(-100px + 50%);
+     
+    }    
+  }
+
+  @media (max-width: 640px) {
+    .modal {
+
+      width: auto;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      left: 0;
+      right: 0;
+      /*bottom: 0;*/
+      max-height: 96%;
+      top: 50px;
+      max-height: calc(100% - 50px);
+
+      } }
+
+.modal > *,
+.modal fieldset:last-child{
+  margin: 0;
+} 
+
+/*
+ * Animations
+ */
+@-webkit-keyframes showModal {
+  0% {
+    transform: scale(0.7);
+    -webkit-transform: scale(0.7); }
+
+  90% {
+    transform: scale(1.01);
+    -webkit-transform: scale(1.01); }
+
+  95% {
+    transform: scale(0.99);
+    -webkit-transform: scale(0.99); }
+
+  100% {
+    transform: scale(1);
+    -webkit-transform: scale(1); } }
+
+@keyframes showModal {
+  0% {
+    transform: scale(0.7);
+    -webkit-transform: scale(0.7); }
+
+  90% {
+    transform: scale(1.01);
+    -webkit-transform: scale(1.01); }
+
+  95% {
+    transform: scale(0.99);
+    -webkit-transform: scale(0.99); }
+
+  100% {
+    transform: scale(1);
+    -webkit-transform: scale(1); } }
+
+@-webkit-keyframes hideModal {
+  0% {
+    transform: scale(1);
+    -webkit-transform: scale(1); }
+
+  100% {
+    transform: scale(0.5);
+    -webkit-transform: scale(0.5); } }
+
+@keyframes hideModal {
+  0% {
+    transform: scale(1);
+    -webkit-transform: scale(1); }
+
+  100% {
+    transform: scale(0.5);
+    -webkit-transform: scale(0.5); } }
+
+
+.showModal[data-animation=pop] {
+  -webkit-animation: showModal 0.2s;
+  animation: showModal 0.2s; }
+
+.hideModal[data-animation=pop] {
+  -webkit-animation: hideModal 0.2s;
+  animation: hideModal 0.2s; } 

@@ -1,0 +1,412 @@
+icon{
+    display: inline-block;
+    font-family: sans-serif;
+    position: relative;
+    height: 1em;
+    /* float: left; */
+    /* clear: left; */
+    flex-grow: 1;
+    width: 1em;
+    margin: 0;
+    /* margin-right: -0.36em; */
+    z-index: 99999;
+}
+
+icon:before,
+icon:after{
+    position: absolute;
+    font-family: ankha;
+    font-weight: 100;
+    z-index: 3;
+    top: -0.05em;
+    left: 0;
+    right: 0;
+    border: 0;
+    bottom: 0;
+    background-repeat: no-repeat;
+     background-size: contain;
+}
+
+icon:after{
+    transform: scale(0.8)
+}
+icon:before{
+    content: 'o'; 
+    z-index: 1;
+    display: inline-block !important;
+    color: white;
+} 
+
+
+
+
+.D:before{
+    content: ' ';
+    background: white;
+    border-radius: 40px;
+    box-shadow: 0 0.05em 0.2em rgba(0, 0, 0, 0.8);}
+
+.D:after{    content: '}';
+    transform: scale(0.9);
+    margin-top: 0.03em; }
+
+card-text .D{
+    margin-left: 0em; 
+/*    margin-right: 0.05em; */
+}
+card-text effect .D{
+    margin-top: -0.2em    
+}
+
+.MERGED:before{content: '¶'}
+.MERGED:after{content: 'µ'} 
+
+.CONVICTION{margin-left: -0.05em;}
+.CONVICTION:before{content: '';}
+.CONVICTION:after{content: '¤';}  
+.CONVICTION span{
+    position: absolute;
+    z-index: 3;
+    font-size: 50%;
+    margin-top: 0.25em;
+    width: 1em;
+    height: 1em;
+    display: block;
+    text-align: center;
+    margin-left: 0.4em;
+}
+
+/*
+.action:after{content: '0';}
+.equipment:after{content: '0';}
+.equipment:after{content: '0';}
+*/
+
+.ADVANCED:after{content: '|'; margin-left: 0.1em;}
+.ADVANCED:before{content: '_'; margin-left: 0.1em;}
+
+.abo:after{content: 'w'}
+.ACTION_MODIFIER:after{content: '1'}
+.ACTION:after{content: '0'}
+.ALLY:after{content: '3'}
+.ani:after{content: 'i'}
+.aus:after{content: 'a';}
+.cel:after{content: 'c'}
+.chi:after{content: 'k'}
+.COMBAT:after{content: '4'}
+.dai:after{content: 'y'}
+.dem:after{content: 'e'}
+.dom:after{content: 'd'}
+.FLIGHT:after{content: '^'}
+.flight:after{content: '^'}
+.for:after{content: 'f'}
+.mal:after{content: 'â';}
+.mel:after{content: 'm'}
+.myt:after{content: 'x'}
+.nec:after{content: 'n'}
+.obe:after{content: 'b'}
+.obf:after{content: 'o'}
+.obt:after{content: '$'}
+.obl:after{content: 'ø'}
+.pot:after{content: 'p'}
+.pre:after{content: 'r'}
+.pro:after{content: 'j'} 
+.EQUIPMENT:after{content: '5'}
+/*.EVENT:after{background-image: url(../img/icons/icontypeevent.gif);content: '';filter: drop-shadow(0 0.05em 0.2em rgba(0,0,0,0.8));}*/
+/*.EVENT:before{ content: '';}*/
+
+.EVENT:after {
+    content: '[';
+}
+.EVENT:before{content: '';}
+
+
+.POWER:after{content: '§'}
+.POLITICAL_ACTION:after{content: '2'}
+.MASTER:after{content: '9'}
+.qui:after{content: 'q'}
+.REACTION:after{content: '7'}
+.RETAINER:after{content: '8'}
+.REFLEX:after{content: '6'}
+.san:after{content: 'g'}
+.ser:after{content: 's'}
+.spi:after{content: 'z'}
+.str:after{content: 'à';}
+.tem:after{content: '?'}
+.tha:after{content: 't'}
+.thn:after{content: 'h'}
+.val:after{content: 'l'}
+.vic:after{content: 'v'}
+.vis:after{content: 'u';}
+
+
+.or {
+/*    background: red;*/
+    margin: -0.2em 0.0em -0.2em 0.0em;
+}
+.or:before{
+    content: ''; 
+    font-family: 'gill';
+}
+.or:after{
+    content: ' or '; 
+    font-family: 'gill';
+}
+    
+
+.ABO:after{content: 'W'; }
+
+.ANI:after{content: 'I'; transform: scale(0.8) }
+.AUS:after{content: 'A'; transform: scale(0.8) }
+.CEL:after{content: 'C'; transform: scale(0.8) }
+.CHI:after{content: 'K'; transform: scale(0.8) }
+.DAI:after{content: 'Y'; transform: scale(0.8) }
+.DEM:after{content: 'E'; transform: scale(0.8) }
+.DOM:after{content: 'D'; transform: scale(0.8) }
+.FOR:after{content: 'F'; transform: scale(0.8) }
+.MAL:after{content: 'ã'; transform: scale(0.8) }
+.MEL:after{content: 'M'; transform: scale(0.8) }
+.MYT:after{content: 'X'; transform: scale(0.8) }
+.NEC:after{content: 'N'; transform: scale(0.8) }
+.OBE:after{content: 'B'; transform: scale(0.8) }
+.OBF:after{content: 'O'; transform: scale(0.8) }
+.OBT:after{content: '£'; transform: scale(0.8) }
+.OBL:after{content: 'Ø'; transform: scale(0.8) }
+.POT:after{content: 'P'; transform: scale(0.8) }
+.PRE:after{content: 'R'; transform: scale(0.8) }
+.PRO:after{content: 'J'; transform: scale(0.8) }
+.QUI:after{content: 'Q'; transform: scale(0.8) }
+.SAN:after{content: 'G'; transform: scale(0.8) }
+.SER:after{content: 'S'; transform: scale(0.8) }
+.SPI:after{content: 'Z'; transform: scale(0.8) }
+.STR:after{content: 'á'; transform: scale(0.8) }
+.TEM:after{content: '!'; transform: scale(0.8) }
+.THA:after{content: 'T'; transform: scale(0.8) }
+.THN:after{content: 'H'; transform: scale(0.8) }
+.VAL:after{content: 'L'; transform: scale(0.8) }
+.VIC:after{content: 'V'; transform: scale(0.8) }
+.VIS:after{content: 'U'; transform: scale(0.8) }
+.ABO:before{content:'O'; }
+.ANI:before{content:'O'; }
+.AUS:before{content:'O'; }
+.CEL:before{content:'O'; }
+.CHI:before{content:'O'; }
+.DAI:before{content:'O'; }
+.DEM:before{content:'O'; }
+.DOM:before{content:'O'; }
+.FOR:before{content:'O'; }
+.MAL:before{content:'O'; }
+.MEL:before{content:'O'; }
+.MYT:before{content:'O'; }
+.NEC:before{content:'O'; }
+.OBE:before{content:'O'; }
+.OBF:before{content:'O'; }
+.OBT:before{content:'O'; }
+.OBL:before{content:'O'; }
+.POT:before{content:'O'; }
+.PRE:before{content:'O'; }
+.PRO:before{content:'O'; }
+.QUI:before{content:'O'; }
+.SAN:before{content:'O'; }
+.SER:before{content:'O'; }
+.SPI:before{content:'O'; }
+.STR:before{content:'O'; }
+.TEM:before{content:'O'; }
+.THA:before{content:'O'; }
+.THN:before{content:'O'; }
+.VAL:before{content:'O'; }
+.VIC:before{content:'O'; }
+.VIS:before{content:'O'; }
+
+.FLIGHT:before{content: ''}
+.flight:before{content: ''}
+.flight{ margin-right: 0.2em}
+
+
+.BURNABLE:after{
+    content: '~'
+}
+
+icon.abomination:after,
+icon.ahrimane:after,
+icon.ministry:after,
+icon.banu_haqim:after,
+icon.akunanse:after,
+icon.gargoyle:after,
+icon.giovanni:after,
+icon.guruhi:after,
+icon.ishtarri:after,
+icon.osebo:after,
+icon.defense:after   , icon.def:after, 
+icon.innocence:after , icon.inn:after, 
+icon.judgment:after  , icon.jus:after, 
+icon.judgment:after  , icon.jud:after, 
+icon.martyrdom:after , icon.mar:after, 
+icon.redemption:after, icon.red:after, 
+icon.vengeance:after , icon.ven:after, 
+icon.vision:after    , icon.viz:after, 
+icon.avenger:after,
+icon.defender:after,
+icon.innocent:after,
+icon.judge:after,
+icon.martyr:after,
+icon.redeemer:after,
+icon.visionary:after,
+icon.tremere_antitribu:after {
+     content: ' ';
+     display: block;
+     width: 100%;
+     height: 100%;
+     background-repeat: no-repeat;
+     background-size: contain;
+     /* margin-top: 0.2em; */
+     /* disabled-text-shadow: 0 4px 13px rgba(0,0,0,0.5); */
+}
+
+
+icon.abomination:after           {background-image: url(/img/icons/iconclanabo.gif);/* top: -0.18em; */}
+
+icon.defense:after   , icon.def:after { background-image: url(/img/icons/iconvirtuedefense.gif);}
+icon.innocence:after , icon.inn:after { background-image: url(/img/icons/iconvirtueinnocence.gif);}
+icon.judgment:after  , icon.jus:after { background-image: url(/img/icons/iconvirtuejustice.gif);}
+icon.judgment:after  , icon.jud:after { background-image: url(/img/icons/iconvirtuejustice.gif);}
+icon.martyrdom:after , icon.mar:after { background-image: url(/img/icons/iconvirtuemartyrdom.gif);}
+icon.redemption:after, icon.red:after { background-image: url(/img/icons/iconvirtueredemption.gif);}
+icon.vengeance:after , icon.ven:after { background-image: url(/img/icons/iconvirtuevengeance.gif);}
+icon.vision:after    , icon.viz:after { background-image: url(/img/icons/iconvirtuevision.gif);}
+
+icon.ministry:after              {background-image: url(/img/icons/iconclanministry.png);/* top: -0.1em; */}
+icon.banu_haqim:after             {background-image: url(/img/icons/iconclanbanuhaqim.png);/* top: -0.1em; */}
+icon.ahrimane:after              {background-image: url(/img/icons/iconclanahrimanes.gif);/* top: -0.1em; */}
+icon.akunanse:after              {background-image: url(/img/icons/iconclanakunanse.gif);/* height: 1.1em; *//* left: 0.04em; *//* width: 1.2em; *//* top: -0.11em; */}
+icon.gargoyle:after              {background-image: url(/img/icons/iconclangargoyle.gif);/* top: -0.25em; */}
+icon.giovanni:after              {background-image: url(/img/icons/iconclangiovanni.gif);}
+icon.guruhi:after                {background-image: url(/img/icons/iconclanguruhi.gif);/* height: 1.1em; *//* left: 0.04em; *//* width: 1.2em; *//* top: -0.15em; */}
+icon.ishtarri:after              {background-image: url(/img/icons/iconclanishtarri.gif);/* height: 1.1em; *//* left: 0; *//* width: 1.2em; *//* top: -0.15em; */}
+icon.osebo:after                 {background-image: url(/img/icons/iconclanosebo.gif);/* height: 1em; *//* left: -0.1em; *//* width: 1.2em; *//* top: -0.15em; */}
+/*icon.tremere_antitribu:after     {background-image: url(/img/icons/iconclantremereanti.gif);height: 1.2em;display: block;width: 1.2em;content: ' ';top: -0.27em;left: -0.1em;}*/
+icon.assamite:after              {font-family: 'wod-icons';/* font-size:90%; */content: 'n';}
+icon.baali:after                 {font-family: 'wod-icons';font-size: 104%;content: 'H';left: -0.03em;}
+icon.blood_brother:after         {font-family: 'wod-icons';content: 'u';/* left: -0.08em; *//* top: 0.07em; *//* font-size: 95%; */bottom: 0.05em;}
+icon.brujah:after                {font-family: 'wod-icons';font-size: 97%;content: 'c';}
+/*icon.brujah_antitribu:after      {font-family: 'wod-icons';content: 'z';left: -0.05em;top: 0.05em;font-size: 95%;}*/
+icon.caitiff:after               {font-family: 'wod-icons';font-size: 95%;content: 'k';}
+icon.daughter_of_cacophony:after {font-family: 'wod-icons';/* font-size: 90%; *//* content: 'd'; *//* left: -0.15em; */}
+icon.follower_of_set:after       {font-family: 'wod-icons';font-size:90%;content: 'b';/* font-size: 116%; *//* top: -0.2em; */}
+icon.gangrel:after               { font-family: 'wod-icons'; font-size:90%; content: 'e';}
+/*icon.gangrel_antitribu:after     {font-family: 'wod-icons';font-size:90%;content: 'C';margin-top: 0.08em;}*/
+icon.harbinger_of_skulls:after   {font-family: 'wod-icons';content: 't';/* left: -0.05em; *//* top: 0.05em; *//* font-size: 95%; */}
+icon.harbingers_of_skulls:after  { font-family: 'wod-icons'; font-size:90%; content: 't';}
+icon.harbingers_of_skulls:after  { font-family: 'wod-icons'; font-size:90%; content: 't';}
+icon.kiasyd:after                {font-family: 'wod-icons';font-size:90%;content: 'y';/* left: -0.05em; *//* top: 0.05em; *//* font-size: 95%; */}
+icon.lasombra:after              {font-family: 'wod-icons';/* font-size:90%; */content: 'r';/* margin-left: -0.05em; *//* top: -0.05em; */}
+icon.malkavian:after             { font-family: 'wod-icons'; font-size:90%; content: 'f';}
+/*icon.malkavian_antitribu:after   {font-family: 'wod-icons';content: 'w';left: -0.05em;top: 0.02em;font-size: 100%;}*/
+icon.nagaraja:after              {font-family: 'wod-icons';font-size: 70%;content: 'J';/* margin-left: -0.1em; *//* top: 0.15em; */}
+icon.nosferatu:after             {font-family: 'wod-icons';/* font-size: 95%; */content: 'g';/* top: -0.1em; */}
+/*icon.nosferatu_antitribu:after   {font-family: 'wod-icons';content: 'v';left: -0.05em;top: 0.05em;font-size: 95%;}*/
+icon.pander:after                {font-family: 'wod-icons';font-size: 97%;content: 's';}
+icon.ravnos:after                {font-family: 'wod-icons';font-size: 105%;content: 'a';top: -0.05em;}
+icon.salubri:after               {font-family: 'wod-icons';font-size: 106%;content: 'm';top: -0.07em;}
+/*icon.salubri_antitribu:after     {font-family: 'wod-icons';font-size:90%;content: 'x';color: black;content: 'm';}*/
+icon.samedi:after                {font-family: 'wod-icons';font-size: 100%;content: 'p';top: -0.05em;}
+icon.toreador:after              {font-family: 'wod-icons';font-size: 75%;content: 'h';/* transform: rotateY(180deg) rotateZ(15deg); */}
+/*icon.toreador_antitribu:after    {font-family: 'wod-icons';content: 'B';left: -0.05em;top: 0.05em;font-size: 95%;}*/
+icon.tremere:after               { font-family: 'wod-icons'; font-size:90%; content: 'i';}
+/*icon.true_brujah:after           {font-family: 'wod-icons';font-size: 96%;content: 'K';left: -0.04em;top: -0.04em;}*/
+icon.tzimisce:after              {font-family: 'wod-icons';font-size:90%;content: 'q';/* left: -0.05em; *//* top: -0.02em; *//* font-size: 95%; */}
+icon.ventrue:after               { font-family: 'wod-icons'; font-size:90%; content: 'j';}
+/*icon.ventrue_antitribu:after     {font-family: 'wod-icons';font-size:90%;content: 'A';left: -0.05em;top: 0.05em;font-size: 95%;}*/
+
+icon.hecata:after              {font-family: 'vtes-clans'; content: 'y';/* margin-left: -0.05em; *//* top: -0.05em; */ }
+icon.CAINE:after, icon.CAINE:before              {font-family: 'vtes-clans'; content: '#';/* margin-left: -0.05em; *//* top: -0.05em; */ }
+icon.CATHARI:after, icon.CATHARI:before              {font-family: 'vtes-clans'; content: '$';/* margin-left: -0.05em; *//* top: -0.05em; */ }
+icon.DEATH_AND_THE_SOUL:after, icon.DEATH_AND_THE_SOUL:before              {font-family: 'vtes-clans'; content: '%';/* margin-left: -0.05em; *//* top: -0.05em; */ }
+icon.POWER_AND_THE_INNER_VOICE:after, icon.POWER_AND_THE_INNER_VOICE:before              {font-family: 'vtes-clans'; content: '&';/* margin-left: -0.05em; *//* top: -0.05em; */ }
+
+icon.CAINE:before,
+icon.CATHARI:before,
+icon.DEATH_AND_THE_SOUL:before,
+icon.POWER_AND_THE_INNER_VOICE:before {
+    display: none !important;
+
+    -webkit-text-stroke: white thin;
+}
+
+icon.avenger:after{background-image: url(/img/icons/iconcreavenger.gif);/* width: 1.2em; *//* height: 1.2em; *//* left: 0.2em; */}
+icon.defender:after{background-image: url(/img/icons/iconcredefender.gif);left: 0.05em;}
+icon.innocent:after{background-image: url(/img/icons/iconcreinnocent.gif);/* left: 0.1em; *//* height: 1.1em; *//* width: 1.1em; */}
+icon.judge:after{background-image: url(/img/icons/iconcrejudge.gif);left: 0.05em;}
+icon.martyr:after{background-image: url(/img/icons/iconcremartyr.gif);left: 0.05em;}
+icon.redeemer:after{background-image: url(/img/icons/iconcreredeemer.gif);left: 0.05em;}
+icon.visionary:after{ background-image: url(/img/icons/iconcrevisionary.gif);}
+
+icon.defense:before   , icon.def:before,
+icon.innocence:before , icon.inn:before,
+icon.judgment:before  , icon.jus:before,
+icon.judgment:before  , icon.jud:before,
+icon.martyrdom:before , icon.mar:before,
+icon.redemption:before, icon.red:before,
+icon.vengeance:before , icon.ven:before,
+icon.vision:before    , icon.viz:before,
+icon.abomination:before,
+icon.ahrimane:before,
+icon.ministry:before,
+icon.banu_haqim:before,
+icon.akunanse:before,
+icon.gargoyle:before,
+icon.giovanni:before,
+icon.guruhi:before,
+icon.ishtarri:before,
+icon.osebo:before,
+icon.tremere_antitribu:before,
+icon.abomination:before,
+icon.ahrimane:before,
+icon.akunanse:before,
+icon.gargoyle:before,
+icon.giovanni:before,
+icon.guruhi:before,
+icon.ishtarri:before,
+icon.osebo:before,
+icon.tremere_antitribu:before,
+icon.gangrel_antitribu:before,
+icon.assamite:before,
+icon.baali:before,
+icon.blood_brother:before,
+icon.brujah:before,
+icon.brujah_antitribu:before,
+icon.caitiff:before,
+icon.daughter_of_cacophony:before,
+icon.follower_of_set:before,
+icon.gangrel:before,
+icon.harbinger_of_skulls:before,
+icon.harbingers_of_skulls:before,
+icon.kiasyd:before,
+icon.lasombra:before,
+icon.hecata:before,
+icon.malkavian:before,
+icon.malkavian_antitribu:before,
+icon.nagaraja:before,
+icon.nosferatu:before,
+icon.nosferatu_antitribu:before,
+icon.pander:before,
+icon.ravnos:before,
+icon.salubri:before,
+icon.salubri_antitribu:before,
+icon.samedi:before,
+icon.toreador:before,
+icon.toreador_antitribu:before,
+icon.tremere:before,
+icon.true_brujah:before,
+icon.tzimisce:before,
+icon.ventrue:before,
+icon.ventrue_antitribu:before,
+icon.martyr:before,
+icon.innocent:before,
+icon.visionary:before,
+icon.judge:before,
+icon.defender:before,
+icon.avenger:before,
+icon.redeemer:before {
+    display: none !important;
+}
