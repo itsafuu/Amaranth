@@ -154,8 +154,11 @@
 	}
 
 	refresh(e) {		
-		swal({type:'', title: '', text: 'Syncing decks from cloud.', showConfirmButton: false, allowOutsideClick: true, timer: 1.5 * 1000}).done()	
-		app.syncdecks(true)
+		swal({type:'success', title: '', text: 'Refreshing decks.', showConfirmButton: false, allowOutsideClick: true, timer: 1000}).done()	
+		// Reload decks from localStorage
+		app.load()
+		this.decks = app.decks
+		this.update()
 	}
 
 
