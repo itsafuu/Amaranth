@@ -89,64 +89,87 @@
 			}
 		}
 	
-		printsome(e) {
-			e.preventUpdate = true	
+	printsome(e) {
+		e.preventUpdate = true	
 
+		// Generate text for selected cards only
+		var textContent = this.generatePrintText();
+		
+		// Create a blob and open in new tab
+		var blob = new Blob([textContent], {type: 'text/plain'});
+		var url = URL.createObjectURL(blob);
+		var printWindow = window.open(url, '_blank');
+		
+		if (!printWindow) {
+			swal({type:'error', text: 'Please allow popups to print.', showConfirmButton: false, allowOutsideClick: true, timer: 3 * 1000}).done();
+			return;
+		}
+		
+		// Wait a moment then trigger print
+		setTimeout(function() {
+			printWindow.print();
+			// Clean up the blob URL after printing
+			setTimeout(function() {
+				URL.revokeObjectURL(url);
+			}, 1000);
+		}, 500);
+		
+		// Close the modal
+		this.cancel(e);
+	}
 
-			var ifloggedin = function(){
-				// Show please wait dialogue
-				swal({type:'info', text: 'Generating PDF...', showConfirmButton: false, allowOutsideClick: false, timer: 25 * 1000 }).done()	
-
-				app.callapi('/api/print', {
-					deck: JSON.stringify(this.deck), 
-					cards: JSON.stringify(this.printcards),
-					format: (this.useoldcards ? 'old' : 'new') 
-				}, function(response){
-
-					if(response.success) {
-						swal({type:'success', text: 'Downloading PDF.', showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
-						var download =  response.result 
-						app.downloadpdf(download, this.deck.title)
-						this.cancel(e)
-					}
-
-					else {
-						var error = 'There\'s been an error — please try again.'
-
-						if(response.error && response.error.code == -1) {
-							var error = response.error.message
-						}
-
-						swal({type:'error', text: error, showConfirmButton: false, allowOutsideClick: true, timer: 5 * 1000}).done()	
-					}
-				}.bind(this))
-			}.bind(this)
-
-
-			if(app.user.id) {
-				ifloggedin()
-			} 
-
-			else {
-				app.login(ifloggedin)
+	generatePrintText() {
+		var text = '';
+		var deck = this.deck;
+		
+		// Generate crypt and library arrays from selected cards
+		var selectedCrypt = [];
+		var selectedLibrary = [];
+		
+		// Separate selected cards into crypt and library
+		for (var id in this.printcards) {
+			var card = cardindex[id];
+			var qty = this.printcards[id];
+			
+			if (card.type === 'Vampire' || card.type === 'Imbued') {
+				selectedCrypt.push({name: card.name, qty: qty});
+			} else {
+				selectedLibrary.push({name: card.name, qty: qty});
 			}
 		}
+		
+		// Build the text output
+		text = deck.title + '\n';
+		if (deck.author) text += 'Author: ' + deck.author + '\n';
+		if (deck.description) text += '\n' + deck.description + '\n';
+		
+		text += '\n-- Crypt (' + selectedCrypt.length + ') --\n';
+		selectedCrypt.forEach(function(card) {
+			text += card.qty + 'x ' + card.name + '\n';
+		});
+		
+		text += '\n-- Library (' + selectedLibrary.length + ') --\n';
+		selectedLibrary.forEach(function(card) {
+			text += card.qty + 'x ' + card.name + '\n';
+		});
+		return text;
+	}
 
-		cancel(e){
-			e.preventUpdate = true	
+	cancel(e){
+		e.preventUpdate = true	
 
-			if($(this.root).parents('.modal').length) {
-				app.hidemodal()
-				setTimeout(function(){
-					this.unmount() 
-				}.bind(this), 500)
-			}
-
-			else {
-				riot.route('/decks')
-			}
-
+		if($(this.root).parents('.modal').length) {
+			app.hidemodal()
+			setTimeout(function(){
+				this.unmount() 
+			}.bind(this), 500)
 		}
+
+		else {
+			riot.route('/decks')
+		}
+
+	}
 
 		var onedit = function(){
 			this.update()			
