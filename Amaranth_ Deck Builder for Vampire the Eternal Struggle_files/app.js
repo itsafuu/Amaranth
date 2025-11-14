@@ -1258,19 +1258,60 @@ riot.route('/whatsnew', function(){
 })
 
 riot.route('/quickstart', function(){
-	console.log('mount seating')
+	console.log('mount quickstart')
 
 	if(app.quickstartdecks) {
 		app.mount('quickstart', { decks: app.quickstartdecks })
 	} 
 
 	else {
-		app.callapi('/api/quickstart-decks', function(response){
-			if(response.success) {
-				app.quickstartdecks = response.result
-				app.mount('quickstart', { decks: app.quickstartdecks })
+		// For offline/static use, provide hardcoded quickstart decks
+		// These can be replaced with actual deck data or loaded from local storage
+		app.quickstartdecks = [
+			{
+				uuid: 'quickstart-brujah-bruise',
+				title: 'Brujah Bruise & Bleed',
+				description: 'An aggressive Brujah combat deck focused on rushing and bleeding. Uses Potence for combat superiority and Presence for vote control.',
+				author: 'Sample Deck',
+				cards: {}
+			},
+			{
+				uuid: 'quickstart-toreador-bleed',
+				title: 'Toreador Bleed',
+				description: 'A classic bleed deck using Toreador vampires with Auspex and Celerity. Focuses on stealth bleeds and bounce defense.',
+				author: 'Sample Deck',
+				cards: {}
+			},
+			{
+				uuid: 'quickstart-tremere-toolbox',
+				title: 'Tremere Toolbox',
+				description: 'A versatile Tremere deck using Thaumaturgy and Auspex. Provides multiple strategies including bleeds, votes, and combat options.',
+				author: 'Sample Deck',
+				cards: {}
+			},
+			{
+				uuid: 'quickstart-malkavian-stealth',
+				title: 'Malkavian Stealth Bleed',
+				description: 'Malkavian deck emphasizing stealth bleeds with Obfuscate and Dominate. Includes mental tricks and superior bleed modifiers.',
+				author: 'Sample Deck',
+				cards: {}
+			},
+			{
+				uuid: 'quickstart-ventrue-princes',
+				title: 'Ventrue Princes',
+				description: 'A political deck featuring Ventrue princes. Uses Dominate for bleeds and Fortitude for survival, with strong voting power.',
+				author: 'Sample Deck',
+				cards: {}
+			},
+			{
+				uuid: 'quickstart-gangrel-rush',
+				title: 'Gangrel Rush',
+				description: 'An aggressive Gangrel rush deck with Protean and Fortitude. Focuses on entering combat and dealing damage quickly.',
+				author: 'Sample Deck',
+				cards: {}
 			}
-		})
+		]
+		app.mount('quickstart', { decks: app.quickstartdecks })
 	}
 
 })
